@@ -18,11 +18,6 @@ object Dependencies {
   val cats: D = group( "org.typelevel", catsVersion )( "cats-core" )( "cats" ) ++
     group( "com.github.benhutchison" %% "mouse" % "0.9" )() map (_.exclude( "org.typelevel", "cats_2.12" ) )
 
-  val scalatest: D = group()( "org.scalatest" %% "scalatest" % "3.0.3" )
-
-  val scalacheck: D =
-    group()( "org.scalacheck" %% "scalacheck" % "1.13.4", "io.github.amrhassan" %% "scalacheck-cats" % "0.3.3" )
-
   val monocleVersion = "1.4.0"
 
   val monocle: D =
@@ -30,5 +25,13 @@ object Dependencies {
 
   val shapeless: D = group( "com.chuusai" %% "shapeless" % "2.3.2" )()
 
-  val common: D = kindProjector ++ cats ++ shapeless ++ scalacheck ++ scalatest
+  val scalatest: D = group()( "org.scalatest" %% "scalatest" % "3.0.3" )
+
+  val scalacheck: D =
+    group()( "org.scalacheck" %% "scalacheck" % "1.13.4", "io.github.amrhassan" %% "scalacheck-cats" % "0.3.3" )
+
+  val enumeratumVersion: String = "1.5.12"
+  val enumeratum: D             = group( "com.beachape" %% "enumeratum" % enumeratumVersion )()
+
+  val common: D = kindProjector ++ cats ++ shapeless ++ enumeratum ++ scalacheck ++ scalatest
 }

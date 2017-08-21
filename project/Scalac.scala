@@ -2,7 +2,7 @@ import sbt._
 import sbt.Keys._
 
 object Scalac {
-  val options = Seq(
+  val options: Seq[String] = Seq(
     "-deprecation",
     "-encoding",
     "UTF-8",
@@ -20,14 +20,25 @@ object Scalac {
     "-Ywarn-value-discard"
   )
 
-  // format: off
-  val settings = Seq(
-    scalacOptions                       ++= options,
-    scalacOptions in Test               ~=  (_.filterNot(_ == "-Ywarn-valueDiscard")),
-    // Note: uncomment this when importing to IntelliJ IDEA
-    // scalacOptions                       ~=  (_.filterNot(_ == "-Ywarn-valueDiscard")),
-    scalacOptions in (Compile, console) ~=  (_.filterNot(_ == "-Xlint").filterNot(_ == "-Ywarn-unused-import")),
-    scalacOptions in (Test,    console) :=  (scalacOptions in (Compile, console)).value
-  )
+  def workaroundForIntellij( opts: Seq[String] ): Seq[String] =
+    if (sys.props.contains( "idea.runid" ))
+      forTest( opts )
+    else
+      opts
+
+  def forTest( opts: Seq[String] ): Seq[String] =
+    opts.filterNot( _ == "-Ywarn-value-discard" )
+
+  def forConsole( opts: Seq[String] ): Seq[String] =
+    opts.filterNot( Set( "-Xlint", "-Ywarn-unused-import" ) )
+
+  val settings: Seq[Def.Setting[_]] =
+    // format: off
+    Seq(
+      scalacOptions                         ++= workaroundForIntellij( options ),
+      scalacOptions   in Test               ~=  forTest,
+      scalacOptions   in (Compile, console) ~=  forConsole,
+      scalacOptions   in (Test,    console) :=  forTest( (scalacOptions in (Compile, console)).value )
+    )
   // format: on
 }
