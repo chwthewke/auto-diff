@@ -24,4 +24,5 @@ val `auto-diff-core` = project
 val `auto-diff` = project
   .in( file( "." ) )
   .settings( sharedSettings )
+  .settings( publish := {}, publishLocal := {} )
   .aggregate( `auto-diff-core` )
