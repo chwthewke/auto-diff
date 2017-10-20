@@ -2,8 +2,8 @@
 
 This project provides the `Difference` ADT, which models structural diff of
 scala values. It is built (and depends) on
-[https://github.com/typelevel/cats](cats) and
-[https://github.com/milessabin/shapeless](shapeless).
+[cats](https://github.com/typelevel/cats) and
+[shapeless](https://github.com/milessabin/shapeless).
 
 `Difference`s are computed via the `Diff[A]` type class that wraps a function
 of type `(A, A) => Option[Difference]`.
@@ -41,5 +41,5 @@ of `Difference` values.
 
 # Credits
 
-[https://github.com/xdotai/diff](xdotai/diff) for inspiration. This code ended
+[xdotai/diff](https://github.com/xdotai/diff) for inspiration. This code ended
 up resembling that more than anticipated.
