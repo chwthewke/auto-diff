@@ -1,13 +1,10 @@
 package net.chwthewke.autodiff
 
 import cats.Eq
-import cats.Order
 import cats.Show
 import cats.data.NonEmptyList
 import cats.functor.Profunctor
 import cats.syntax.option._
-import net.chwthewke.autodiff.unordered.AnyOrder
-
 import scala.collection.immutable.Queue
 import scala.reflect.ClassTag
 import shapeless.:+:
@@ -39,7 +36,7 @@ abstract class DiffShow[A] {
     DiffShow.instance( diff, a => f( show( a ) ) )
 }
 
-object DiffShow extends DiffShowImplicits8 {
+object DiffShow extends DiffShowImplicits6 {
   type Aux[A, D] = DiffShow[A] { type Out = D }
 
   def by[A, B, D]( f: A => B )( implicit D: DiffShow[B] ): DiffShow.Aux[A, D.Out] = D.contramap( f )
@@ -53,11 +50,11 @@ object DiffShow extends DiffShowImplicits8 {
 }
 
 // TODO why delegate and not just mixin?
-trait DiffShowImplicits8 extends DiffShowImplicits7 {
+trait DiffShowImplicits6 extends DiffShowImplicits5 {
   implicit def importDiffShow[A, D]( implicit ex: ExportedDiffShow[A] ): DiffShow.Aux[A, ValueDifference] = ex.self
 }
 
-trait DiffShowImplicits7 extends DiffShowImplicits6 {
+trait DiffShowImplicits5 extends DiffShowImplicits4 {
   implicit val booleanDiffShow: DiffShow.Aux[Boolean, ValueDifference] = {
     import cats.instances.boolean._
     fromEqShow
@@ -98,20 +95,6 @@ trait DiffShowImplicits7 extends DiffShowImplicits6 {
   // better default for String? other basic types?
 }
 
-trait DiffShowImplicits6 extends DiffShowImplicits5 {
-  implicit def unorderedCollectionDiffWithOrder[A, D <: Difference](
-      implicit D: Lazy[DiffShow.Aux[A, D]],
-      O: Order[A] ): DiffShow.Aux[unordered.AnyOrder[A], ValueDifference] =
-    unordered.treeAnyOrderDiffShow[A, D]
-}
-
-trait DiffShowImplicits5 extends DiffShowImplicits4 {
-  implicit def unorderedCollectionDiffWithEquality[A, D <: Difference](
-      implicit D: Lazy[DiffShow.Aux[A, D]],
-      H: custom.NoHash[A] ): DiffShow.Aux[unordered.AnyOrder[A], ValueDifference] =
-    unordered.equalityAnyOrderDiffShow[A, D]
-}
-
 trait DiffShowImplicits4 extends DiffShowImplicits3 {
   // collections
   // List, Vector are in-order
@@ -133,12 +116,18 @@ trait DiffShowImplicits4 extends DiffShowImplicits3 {
     collections.vectorDiffShow
 
   implicit def setDiff[A](
-      implicit A: Lazy[DiffShow.Aux[AnyOrder[A], ValueDifference]] ): DiffShow.Aux[Set[A], ValueDifference] =
-    fromLazy( A ).contramap[Set[A]]( unordered.inAnyOrder )
+      implicit A: Lazy[DiffShow.Aux[unordered.AnyOrder[A], ValueDifference]] ): DiffShow.Aux[Set[A], TaggedDifference] =
+    unordered.setDiffShow
 
-  implicit def unorderedCollectionDiffWithHash[A, D <: Difference](
+  implicit def unorderedCollectionDiff[A, D <: Difference](
       implicit D: Lazy[DiffShow.Aux[A, D]] ): DiffShow.Aux[unordered.AnyOrder[A], ValueDifference] =
-    unordered.hashAnyOrderDiffShow[A, D]
+    unordered.anyOrderDiffShow
+
+  implicit def mapDiff[K, V, DK <: Difference, DV <: Difference](
+      implicit K: Lazy[DiffShow.Aux[K, DK]],
+      V: Lazy[DiffShow.Aux[V, DV]]
+  ): DiffShow.Aux[Map[K, V], ObjectDifference] =
+    maps.mapDiffShow
 
 }
 

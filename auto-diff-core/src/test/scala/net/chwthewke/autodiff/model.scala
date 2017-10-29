@@ -10,7 +10,7 @@ object model {
 
   case class Primitives( int: Int, double: Double, string: String )
 
-  case class Collections( vector: Vector[Boolean], list: List[Int], set: Set[String] )
+  case class Collections( vector: Vector[Boolean], list: List[Int], set: Set[String], map: Map[AnEnum, String] )
 
   sealed trait Adt
   case class Variant1( name: String, value: Int ) extends Adt

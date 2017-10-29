@@ -9,6 +9,17 @@ import shapeless.syntax.singleton._
 
 class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
 
+  implicit class StringDiffExt( val self: String ) {
+    def !==( other: String ): ValueDifference =
+      ValueDifference( self, other )
+  }
+
+  def obj( tag: String, diff: TaggedDifference, diffs: TaggedDifference* ): ObjectDifference =
+    ObjectDifference( tag, NonEmptyList( diff, diffs.toList ) )
+
+  def tag( tag: String, diff: Difference ): TaggedDifference =
+    TaggedDifference( tag, diff )
+
   import model._
 
   "Creating Diff instance" when {
@@ -111,12 +122,9 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
         val q = Primitives( 3, 3.14, "foo" )
 
         inside( diff( p, q ) ) {
-          case Some( s: ObjectDifference ) =>
-            s should ===(
-              ObjectDifference( "Primitives",
-                               NonEmptyList.of(
-                                 TaggedDifference( "int", ValueDifference( "8", "3" ) )
-                               ) )
+          case Some( difference ) =>
+            difference should ===(
+              obj( "Primitives", tag( "int", "8" !== "3" ) )
             )
         }
       }
@@ -128,13 +136,9 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
         val q = Primitives( 1, 3.16, "bar" )
 
         inside( diff( p, q ) ) {
-          case Some( s: ObjectDifference ) =>
-            s should ===(
-              ObjectDifference( "Primitives",
-                               NonEmptyList.of(
-                                 TaggedDifference( "double", ValueDifference( "3.14", "3.16" ) ),
-                                 TaggedDifference( "string", ValueDifference( "foo", "bar" ) )
-                               ) )
+          case Some( difference ) =>
+            difference should ===(
+              obj( "Primitives", tag( "double", "3.14" !== "3.16" ), tag( "string", "foo" !== "bar" ) )
             )
         }
       }
@@ -158,12 +162,9 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
           val p = Primitives( 0, 1.0, "foo" )
           val q = Primitives( 1, 1.0, "bar" )
           inside( diff( p, q ) ) {
-            case Some( s: ObjectDifference ) =>
-              s should ===(
-                ObjectDifference( "Primitives",
-                                 NonEmptyList.of(
-                                   TaggedDifference( "int", ValueDifference( "0", "1" ) )
-                                 ) )
+            case Some( difference ) =>
+              difference should ===(
+                obj( "Primitives", tag( "int", "0" !== "1" ) )
               )
           }
 
@@ -190,10 +191,8 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
         val b = Variant1( "bar", 1 )
 
         inside( diff( a, b ) ) {
-          case Some( s: ObjectDifference ) =>
-            s should ===(
-              ObjectDifference( "Variant1",
-                               NonEmptyList.of( TaggedDifference( "name", ValueDifference( "foo", "bar" ) ) ) ) )
+          case Some( difference ) =>
+            difference should ===( obj( "Variant1", tag( "name", "foo" !== "bar" ) ) )
         }
       }
     }
@@ -204,7 +203,7 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
         val b = Variant2( "foo" :: "bar" :: Nil )
 
         inside( diff( a, b ) ) {
-          case Some( s: ValueDifference ) => s should ===( ValueDifference( "Variant1(...)", "Variant2(...)" ) )
+          case Some( difference ) => difference should ===( "Variant1(...)" !== "Variant2(...)" )
         }
       }
     }
@@ -215,7 +214,67 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
         val b = Variant3
 
         inside( diff( a, b ) ) {
-          case Some( s: ValueDifference ) => s should ===( ValueDifference( "Variant1(...)", "Variant3(...)" ) )
+          case Some( difference ) => difference should ===( "Variant1(...)" !== "Variant3(...)" )
+        }
+      }
+    }
+  }
+
+  "diffing collections" when {
+
+    "they are lists of ints" which {
+      val diff: Diff[List[Int]] = Diff[List[Int]]
+
+      "are identical" should {
+        "report no difference" in {
+
+          val left  = List( 1, 2 )
+          val right = List( 1, 2 )
+
+          diff( left, right ) should ===( None )
+
+        }
+      }
+
+      "differ in the first position" should {
+        "report the difference at index 0" in {
+
+          val left  = List( 1, 3 )
+          val right = List( 2, 3 )
+
+          inside( diff( left, right ) ) {
+            case Some( difference ) =>
+              difference should ===( obj( "List", tag( "[0]", "1" !== "2" ) ) )
+          }
+
+        }
+      }
+
+      "differ in the second position" should {
+        "report the difference at index 1" in {
+
+          val left  = List( 1, 3 )
+          val right = List( 1, 2 )
+
+          inside( diff( left, right ) ) {
+            case Some( difference ) =>
+              difference should ===( obj( "List", tag( "[1]", "3" !== "2" ) ) )
+          }
+
+        }
+      }
+
+      "differ in several positions" should {
+        "report the difference at index 1" in {
+
+          val left  = List( 1, 3 )
+          val right = List( 1, 2 )
+
+          inside( diff( left, right ) ) {
+            case Some( difference ) =>
+              difference should ===( obj( "List", tag( "[1]", "3" !== "2" ) ) )
+          }
+
         }
       }
     }

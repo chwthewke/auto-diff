@@ -9,11 +9,6 @@ import shapeless.Witness
 import scala.annotation.implicitNotFound
 
 object custom {
-  trait NoHash[A]
-
-  object NoHash {
-    def apply[A]: NoHash[A] = new NoHash[A] {}
-  }
 
   trait FallbackToEqualAndToString
 
