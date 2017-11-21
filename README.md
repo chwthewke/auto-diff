@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/chwthewke/auto-diff.svg?branch=master)](https://travis-ci.org/chwthewke/auto-diff)
+
 # Structural diff for scala types
 
 This project provides the `Difference` ADT, which models structural diff of
