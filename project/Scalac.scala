@@ -11,12 +11,12 @@ object Scalac {
     "-unchecked",
     "-Xfatal-warnings",
     "-Xfuture",
-    "-Xlint",
+    "-Xlint:-unused",
     "-Yno-adapted-args",
     "-Ypartial-unification",
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
-    "-Ywarn-unused-import",
+    "-Ywarn-unused:imports,patvars,implicits,params",
     "-Ywarn-value-discard"
   )
 

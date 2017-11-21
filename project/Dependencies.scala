@@ -1,3 +1,4 @@
+import sbt.Def
 import sbt._
 import sbt.Keys._
 
@@ -25,13 +26,20 @@ object Dependencies {
 
   val shapeless: D = group( "com.chuusai" %% "shapeless" % "2.3.2" )()
 
-  val scalatest: D = group()( "org.scalatest" %% "scalatest" % "3.0.3" )
+  val scalatest: D = group()( "org.scalatest" %% "scalatest" % "3.0.4" )
+
+  val scalacheckM: ModuleID = "org.scalacheck" %% "scalacheck" % "1.13.5"
 
   val scalacheck: D =
-    group()( "org.scalacheck" %% "scalacheck" % "1.13.4", "io.github.amrhassan" %% "scalacheck-cats" % "0.3.3" )
+    group()( scalacheckM, "io.github.amrhassan" %% "scalacheck-cats" % "0.3.3" )
 
   val enumeratumVersion: String = "1.5.12"
   val enumeratum: D             = group( "com.beachape" %% "enumeratum" % enumeratumVersion )()
 
+  val overrides: Seq[ModuleID] = Seq( scalacheckM )
+
   val common: D = kindProjector ++ cats ++ shapeless ++ enumeratum ++ scalacheck ++ scalatest
+
+  val settings: Seq[Def.Setting[_]] =
+    Seq( libraryDependencies ++= common, dependencyOverrides ++= overrides )
 }
