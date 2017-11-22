@@ -1,4 +1,4 @@
-package net.chwthewke.autodiff
+package fr.thomasdufour.autodiff
 
 import java.time.Duration
 import java.time.Instant

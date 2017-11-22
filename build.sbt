@@ -7,7 +7,7 @@ scalaVersion      in ThisBuild := "2.12.4"
 conflictManager   in ThisBuild := ConflictManager.strict
 // format: on
 
-val sharedSettings = Seq( organization := "net.chwthewke" ) ++ Scalafmt.settings
+val sharedSettings = Seq( organization := "fr.thomasdufour" ) ++ Scalafmt.settings
 
 val autodiffSettings =
   Defaults.coreDefaultSettings ++

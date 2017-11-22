@@ -1,4 +1,4 @@
-package net.chwthewke.autodiff
+package fr.thomasdufour.autodiff
 
 import cats.data.NonEmptyList
 import cats.syntax.option._

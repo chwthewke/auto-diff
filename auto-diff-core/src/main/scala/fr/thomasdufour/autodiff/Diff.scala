@@ -1,4 +1,4 @@
-package net.chwthewke.autodiff
+package fr.thomasdufour.autodiff
 
 trait Diff[A] {
   def apply( left: A, right: A ): Option[Difference]

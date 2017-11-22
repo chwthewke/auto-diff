@@ -1,4 +1,4 @@
-package net.chwthewke.autodiff
+package fr.thomasdufour.autodiff
 
 import cats.data.NonEmptyList
 import org.scalactic.TypeCheckedTripleEquals
@@ -77,7 +77,7 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
 
     "type is a java class and we use fallback" should {
       "succeed" in {
-        import custom.alwaysFallbackToEqualAndToString._
+        import fr.thomasdufour.autodiff.custom.alwaysFallbackToEqualAndToString._
 
         Diff[java.util.UUID]
       }

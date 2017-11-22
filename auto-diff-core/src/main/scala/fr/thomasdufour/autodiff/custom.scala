@@ -1,12 +1,11 @@
-package net.chwthewke.autodiff
+package fr.thomasdufour.autodiff
 
-import shapeless.labelled.FieldType
-import shapeless.ops.hlist.Selector
+import scala.annotation.implicitNotFound
 import shapeless.HList
 import shapeless.LabelledGeneric
 import shapeless.Witness
-
-import scala.annotation.implicitNotFound
+import shapeless.labelled.FieldType
+import shapeless.ops.hlist.Selector
 
 object custom {
 

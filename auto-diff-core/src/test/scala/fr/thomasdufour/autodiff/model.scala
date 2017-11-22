@@ -1,4 +1,4 @@
-package net.chwthewke.autodiff
+package fr.thomasdufour.autodiff
 
 import enumeratum.Enum
 import enumeratum.EnumEntry

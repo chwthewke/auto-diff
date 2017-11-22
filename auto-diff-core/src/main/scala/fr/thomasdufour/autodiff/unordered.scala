@@ -1,4 +1,4 @@
-package net.chwthewke.autodiff
+package fr.thomasdufour.autodiff
 
 import cats.syntax.profunctor._
 import shapeless.Lazy

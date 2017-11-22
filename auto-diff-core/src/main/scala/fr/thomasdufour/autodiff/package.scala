@@ -1,4 +1,4 @@
-package net.chwthewke
+package fr.thomasdufour
 
 package object autodiff {
   import scala.collection.{immutable => sci}
