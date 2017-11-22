@@ -6,4 +6,5 @@ target/
 .project
 .classpath
 .settings
+.scalafmt.conf
 

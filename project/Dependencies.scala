@@ -36,10 +36,15 @@ object Dependencies {
   val enumeratumVersion: String = "1.5.12"
   val enumeratum: D             = group( "com.beachape" %% "enumeratum" % enumeratumVersion )()
 
-  val overrides: Seq[ModuleID] = Seq( scalacheckM )
+  val overrides: Def.Setting[D] = dependencyOverrides ++= Seq(
+    "org.scala-lang" % "scala-library"  % scalaVersion.value,
+    "org.scala-lang" % "scala-compiler" % scalaVersion.value,
+    "org.scala-lang" % "scala-reflect"  % scalaVersion.value,
+    scalacheckM
+  )
 
   val common: D = kindProjector ++ cats ++ shapeless ++ enumeratum ++ scalacheck ++ scalatest
 
   val settings: Seq[Def.Setting[_]] =
-    Seq( libraryDependencies ++= common, dependencyOverrides ++= overrides )
+    Seq( libraryDependencies ++= common, overrides )
 }
