@@ -26,7 +26,7 @@ object Dependencies {
 
   val shapeless: D = group( "com.chuusai" %% "shapeless" % "2.3.2" )()
 
-  val scalatest: D = group()( "org.scalatest" %% "scalatest" % "3.0.4" )
+  val scalatest: D = group( "org.scalatest" %% "scalatest" % "3.0.4" )()
 
   val scalacheckM: ModuleID = "org.scalacheck" %% "scalacheck" % "1.13.5"
 
