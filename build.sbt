@@ -18,11 +18,29 @@ val autodiffSettings =
 
 val `auto-diff-core` = project
   .settings( autodiffSettings )
-  .settings( SbtBuildInfo.buildSettings( "AutodiffCoreBuildInfo" ) )
+  .settings( SbtBuildInfo.buildSettings( "AutodiffBuildInfo" ) )
   .settings( Console.coreImports.settings )
+
+val `auto-diff-enumeratum` = project
+  .settings( autodiffSettings )
+  .settings( Console.coreImports.settings )
+  .settings( libraryDependencies ++= Dependencies.enumeratum )
+  .dependsOn( `auto-diff-core` )
+
+val `auto-diff-scalatest` = project
+  .settings( autodiffSettings )
+  .settings( Console.coreImports.settings )
+  .settings( libraryDependencies ++= Dependencies.scalatest )
+  .dependsOn( `auto-diff-core` )
+
+val `auto-diff-tests` = project
+  .settings( autodiffSettings )
+  .settings( Console.coreImports.settings )
+  .settings( libraryDependencies ++= Dependencies.scalatestForTests ++ Dependencies.scalacheck )
+  .dependsOn( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-scalatest` )
 
 val `auto-diff` = project
   .in( file( "." ) )
   .settings( sharedSettings )
   .settings( publish := {}, publishLocal := {} )
-  .aggregate( `auto-diff-core` )
+  .aggregate( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-scalatest`, `auto-diff-tests` )

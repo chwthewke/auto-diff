@@ -26,12 +26,16 @@ object Dependencies {
 
   val shapeless: D = group( "com.chuusai" %% "shapeless" % "2.3.2" )()
 
-  val scalatest: D = group( "org.scalatest" %% "scalatest" % "3.0.4" )()
+  val scalatestM: ModuleID = "org.scalatest" %% "scalatest" % "3.0.4"
 
   val scalacheckM: ModuleID = "org.scalacheck" %% "scalacheck" % "1.13.5"
 
   val scalacheck: D =
     group()( scalacheckM, "io.github.amrhassan" %% "scalacheck-cats" % "0.3.3" )
+
+  val scalatest: D = group( scalatestM )()
+
+  val scalatestForTests: D = group()( scalatestM )
 
   val enumeratumVersion: String = "1.5.12"
   val enumeratum: D             = group( "com.beachape" %% "enumeratum" % enumeratumVersion )()
@@ -43,7 +47,7 @@ object Dependencies {
     scalacheckM
   )
 
-  val common: D = kindProjector ++ cats ++ shapeless ++ enumeratum ++ scalacheck ++ scalatest
+  val common: D = kindProjector ++ cats ++ shapeless
 
   val settings: Seq[Def.Setting[_]] =
     Seq( libraryDependencies ++= common, overrides )

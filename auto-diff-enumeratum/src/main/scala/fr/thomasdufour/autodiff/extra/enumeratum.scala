@@ -10,3 +10,5 @@ trait EnumeratumDiffShowImplicits {
     new ExportedDiffShow( DiffShow.fromEquality[A]( _ == _, _.entryName ) )
   }
 }
+
+object enumeratum extends EnumeratumDiffShowImplicits
