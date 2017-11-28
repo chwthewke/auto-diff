@@ -6,18 +6,18 @@ object Dependencies {
   type D = Seq[ModuleID]
 
   def group( organization: String, version: String )( artifacts: String* )( testArtifacts: String* ): D =
-    artifacts.map( organization       %% _ % version withSources () ) ++
-      testArtifacts.map( organization %% _ % version % "test" withSources () )
+    artifacts.map( organization       %% _ % version ) ++
+      testArtifacts.map( organization %% _ % version % "test" )
 
   def group( artifacts: ModuleID* )( testArtifacts: ModuleID* ): D =
-    (artifacts map (_ withSources ())) ++ (testArtifacts map (_ % "test" withSources ()))
+    artifacts ++ (testArtifacts map (_ % "test"))
 
   val kindProjector: D = Seq( compilerPlugin( "org.spire-math" %% "kind-projector" % "0.9.4" ) )
 
   val catsVersion = "0.9.0"
 
   val cats: D = group( "org.typelevel", catsVersion )( "cats-core" )( "cats" ) ++
-    group( "com.github.benhutchison" %% "mouse" % "0.9" )() map (_.exclude( "org.typelevel", "cats_2.12" ) )
+    (group( "com.github.benhutchison" %% "mouse" % "0.9" )() map (_.exclude( "org.typelevel", "cats_2.12" ) ))
 
   val monocleVersion = "1.4.0"
 
