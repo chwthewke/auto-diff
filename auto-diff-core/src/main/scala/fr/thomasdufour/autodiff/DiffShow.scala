@@ -39,8 +39,6 @@ abstract class DiffShow[A] {
 object DiffShow extends DiffShowImplicits6 {
   type Aux[A, D] = DiffShow[A] { type Out = D }
 
-  def by[A, B, D]( f: A => B )( implicit D: DiffShow[B] ): DiffShow.Aux[A, D.Out] = D.contramap( f )
-
   def apply[A]( implicit ev: DiffShow[A] ): DiffShow.Aux[A, ev.Out] = ev
 
   implicit val diffShowProfunctor: Profunctor[DiffShow.Aux] = new Profunctor[DiffShow.Aux] {

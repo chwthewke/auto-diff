@@ -6,14 +6,21 @@ import org.scalatest.matchers.MatchResult
 import org.scalatest.matchers.Matcher
 
 object scalatest {
-  def matchWithAutoDiff[A]( expected: A )( implicit diff: Diff[A] ): Matcher[A] =
+  def matchWithAutoDiff[A]( expected: A )( implicit D: Diff[A] ): Matcher[A] =
     new Matcher[A] {
+      private def message( actual: A, difference: Difference ): String =
+        s"""${difference.show}
+           |  expected: ${D.show( expected )}
+           |  actual:   ${D.show( actual )}
+         """.stripMargin
+
       override def apply( actual: A ): MatchResult =
-        diff( actual, expected )
-          .fold( MatchResult( matches = true, "", "" ) )( d => MatchResult( matches = false, d.show, "" ) )
+        D.diff( actual, expected )
+          .fold( MatchResult( matches = true, "", "" ) )( d =>
+            MatchResult( matches = false, message( actual, d ), "" ) )
 
       override def toString(): String =
-        s"autodiff-equivalent to ${diff.show( expected )}"
+        s"autodiff-equivalent to ${D.show( expected )}"
     }
 
 }
