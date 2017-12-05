@@ -2,6 +2,7 @@ import sbt._
 import sbt.Keys._
 import com.typesafe.sbt.pgp.PgpKeys.publishSignedConfiguration
 import com.typesafe.sbt.pgp.PgpKeys.publishLocalSignedConfiguration
+import ReleaseTransformations._
 
 // format: off
 scalaOrganization in ThisBuild := "org.scala-lang"
@@ -53,6 +54,23 @@ val publishSettings = Seq(
   publishLocalConfiguration ~= withOverwrite( enable = true ),
   publishLocalSignedConfiguration ~= withOverwrite( enable = true )
 )
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  setReleaseVersion,
+  runClean,
+  runTest,
+  commitReleaseVersion,
+  tagRelease,
+  releaseStepCommand( "publishSigned" ),
+  setNextVersion,
+  commitNextVersion,
+  releaseStepCommand( "sonatypeReleaseAll" ),
+  pushChanges
+)
+
+releaseVersionBump := sbtrelease.Version.Bump.Minor
 
 val noPublishSettings = Seq(
   publish := {},
