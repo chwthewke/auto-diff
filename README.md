@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/chwthewke/auto-diff.svg?branch=master)](https://travis-ci.org/chwthewke/auto-diff)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/fr.thomasdufour/auto-diff-core_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/fr.thomasdufour/auto-diff-core_2.12)
 
 # Structural diff for scala types
 
@@ -14,13 +15,13 @@ The goal of this library is to provide convenient and extensible generic
 derivation of `Diff` instances, as well as a decent textual representation
 of `Difference` values.
 
-**TODO:** Add examples  
+**TODO:** Add examples, with tut ideally
 
 # Current status
 
 - `Diff` instances can be derived for:
   - primitive types as well as `String`,
-  - a selection of usual collection types,
+  - a selection of usual collection types, including `Map`
   - case classes and sealed hierarchies (via shapeless)
   - enumeratum `Enum`s
 
@@ -31,6 +32,8 @@ of `Difference` values.
 
 # Future work
 
+- Automatic derivation is not so practical, we should move to semi-automatic
+  derivation akin to circe's.
 - Deriving `Diff` for `Map`s.
 - `Option`, `Either` and `Validated` are diffed like any other ADTs, where a
   special purpose instance might serve better.
