@@ -1,5 +1,8 @@
 package fr.thomasdufour
 
+import cats.syntax.either._
+import mouse.all.optionSyntaxMouse
+
 package object autodiff {
   import scala.collection.{immutable => sci}
 
@@ -12,9 +15,19 @@ package object autodiff {
   private[autodiff] type LinearSeq[A] = sci.LinearSeq[A]
   private[autodiff] val LinearSeq: sci.LinearSeq.type = sci.LinearSeq
 
-  type Diff[A] = DiffShow[A] { type Out <: Difference }
-  import language.implicitConversions
-  implicit def extendDiffWithApplyMethod[A]( diffInstance: Diff[A] ): Diff.Ops[A] =
-    new Diff.Ops[A]( diffInstance )
+  private def dropUntilLast( sep: String )( s: String ): String =
+    s.substring( s.lastIndexOf( sep ) + 1 )
+
+  private[autodiff] def getClassSimpleName( klass: Class[_] ): String =
+    Either
+      .catchOnly[InternalError]( klass.getSimpleName )
+      .recoverWith {
+        case _ =>
+          Either.catchNonFatal(
+            klass.getName.stripSuffix( "$" )
+              |> dropUntilLast( "." )
+              |> dropUntilLast( "$" ) )
+      }
+      .getOrElse( "<unknown>" )
 
 }

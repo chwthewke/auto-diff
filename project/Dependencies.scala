@@ -49,7 +49,7 @@ object Dependencies {
     scalacheckM
   )
 
-  val common: D = kindProjector ++ cats ++ shapeless
+  val common: D = kindProjector ++ cats
 
   val settings: Seq[Def.Setting[_]] =
     Seq( libraryDependencies ++= common, overrides )

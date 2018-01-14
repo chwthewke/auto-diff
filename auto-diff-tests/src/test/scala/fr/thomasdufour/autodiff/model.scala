@@ -1,8 +1,9 @@
 package fr.thomasdufour.autodiff
 
+import java.time.OffsetDateTime
+
 import enumeratum.Enum
 import enumeratum.EnumEntry
-import java.time.OffsetDateTime
 
 object model {
 
@@ -10,7 +11,7 @@ object model {
 
   case class Primitives( int: Int, double: Double, string: String )
 
-  case class Collections( vector: Vector[Boolean], list: List[Int], set: Set[String], map: Map[AnEnum, String] )
+  case class Collections( vector: Vector[Boolean], list: List[Int], set: Set[String], map: Map[Long, String] )
 
   sealed trait Adt
   case class Variant1( name: String, value: Int ) extends Adt

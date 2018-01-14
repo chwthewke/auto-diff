@@ -81,8 +81,17 @@ val noPublishSettings = Seq(
 val `auto-diff-core` = project
   .settings( autodiffSettings )
   .settings( SbtBuildInfo.buildSettings( "AutodiffBuildInfo" ) )
+  .settings( libraryDependencies ++= Dependencies.shapeless ) // legacy
   .settings( Console.coreImports.settings )
+  .settings( sourceGenerators in Compile += (sourceManaged in Compile).map( Boilerplate.gen ).taskValue )
   .settings( publishSettings )
+
+val `auto-diff-generic` = project
+  .settings( autodiffSettings )
+  .settings( Console.coreImports.settings )
+  .settings( libraryDependencies ++= Dependencies.shapeless )
+  .settings( publishSettings )
+  .dependsOn( `auto-diff-core` )
 
 val `auto-diff-enumeratum` = project
   .settings( autodiffSettings )
@@ -103,11 +112,11 @@ val `auto-diff-tests` = project
   .settings( Console.coreImports.settings )
   .settings( libraryDependencies ++= Dependencies.scalatestForTests ++ Dependencies.scalacheck ++ Dependencies.splain )
   .settings( noPublishSettings )
-  .dependsOn( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-scalatest` )
+  .dependsOn( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-generic`, `auto-diff-scalatest` )
 
 val `auto-diff` = project
   .in( file( "." ) )
   .settings( sharedSettings )
   .settings( Dependencies.overrides )
   .settings( noPublishSettings )
-  .aggregate( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-scalatest`, `auto-diff-tests` )
+  .aggregate( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-generic`, `auto-diff-scalatest`, `auto-diff-tests` )

@@ -1,28 +1,26 @@
 package fr.thomasdufour.autodiff
+package generic
 
-import cats.data.NonEmptyList
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.Inside._
+//import org.scalatest.Inside._
 import org.scalatest.Matchers
 import org.scalatest.WordSpec
-import shapeless.syntax.singleton._
+//import shapeless.syntax.singleton._
 
 class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
 
-  implicit class StringDiffExt( val self: String ) {
-    def !==( other: String ): ValueDifference =
-      ValueDifference( self, other )
-  }
-
+  /*
   def obj( tag: String, diff: TaggedDifference, diffs: TaggedDifference* ): ObjectDifference =
     ObjectDifference( tag, NonEmptyList( diff, diffs.toList ) )
 
   def tag( tag: String, diff: Difference ): TaggedDifference =
     TaggedDifference( tag, diff )
-
+   */
   import model._
 
-  "Creating Diff instance" when {
+  "Deriving a generic Diff instance" when {
+    import generic.auto._
+
     "type is a simple case class" should {
       "succeed" in {
         Diff[Primitives]
@@ -67,9 +65,9 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
       }
     }
 
+    /*
     "type has java.time member" should {
       "succeed with the appropriate import" in {
-        import javatime._
 
         Diff[WithTime]
       }
@@ -77,13 +75,14 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
 
     "type is a java class and we use fallback" should {
       "succeed" in {
-        import fr.thomasdufour.autodiff.custom.alwaysFallbackToEqualAndToString._
 
         Diff[java.util.UUID]
       }
     }
-  }
+   */
 
+  }
+  /*
   "Diffing ints" when {
     val diff = Diff[Int]
 
@@ -98,7 +97,7 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
     "different" should {
       "return the difference" in {
         inside( diff( 1, 2 ) ) {
-          case Some( difference ) => difference should ===( ValueDifference( "1", "2" ) )
+          case Some( difference ) => difference should ===( "1" !== "2" )
         }
       }
     }
@@ -279,5 +278,6 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
       }
     }
   }
+ */
 
 }

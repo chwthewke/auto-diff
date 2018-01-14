@@ -4,11 +4,11 @@ package extra
 import _root_.enumeratum.Enum
 import _root_.enumeratum.EnumEntry
 
-trait EnumeratumDiffShowImplicits {
-  implicit def enumDiffShow[A <: EnumEntry]( implicit E: Enum[A] ): ExportedDiffShow[A] = {
+trait EnumeratumDiffImplicits {
+  implicit def enumDiffShow[A <: EnumEntry]( implicit E: Enum[A] ): Diff[A] = {
     val _ = E
-    new ExportedDiffShow( DiffShow.fromEquality[A]( _ == _, _.entryName ) )
+    Diff.explicitEqShow[A]( _ == _, _.entryName )
   }
 }
 
-object enumeratum extends EnumeratumDiffShowImplicits
+object enumeratum extends EnumeratumDiffImplicits
