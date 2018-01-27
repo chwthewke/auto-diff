@@ -14,6 +14,8 @@ object Dependencies {
 
   val kindProjector: D = Seq( compilerPlugin( "org.spire-math" %% "kind-projector" % "0.9.4" ) )
 
+  val splain: D = Seq( compilerPlugin( "io.tryp" % "splain" % "0.2.7" cross CrossVersion.patch ) )
+
   val catsVersion = "0.9.0"
 
   val cats: D = group( "org.typelevel", catsVersion )( "cats-core" )( "cats" ) ++
