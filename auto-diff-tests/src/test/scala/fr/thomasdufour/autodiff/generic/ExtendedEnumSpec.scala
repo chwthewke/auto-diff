@@ -9,7 +9,8 @@ import org.scalatest.Matchers
 import org.scalatest.WordSpec
 import extra.enumeratum._
 
-class ExtendedEnumSpec extends WordSpec with Matchers with TypeCheckedTripleEquals with DiffOps {
+class ExtendedEnumSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
+  import DiffOps._
   import ExtendedEnumSpec._
   import semiauto._
 
@@ -39,7 +40,6 @@ class ExtendedEnumSpec extends WordSpec with Matchers with TypeCheckedTripleEqua
     }
 
   }
-
 }
 
 object ExtendedEnumSpec {

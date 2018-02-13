@@ -69,7 +69,8 @@ object Difference {
   }
 
   object Pretty {
-    val Plain2: Pretty = Pretty( indentWidth = 2, color = false )
+    val Plain2: Pretty     = Pretty( indentWidth = 2, color = false )
+    val Colorized2: Pretty = Pretty( indentWidth = 2, color = true )
   }
 
 }

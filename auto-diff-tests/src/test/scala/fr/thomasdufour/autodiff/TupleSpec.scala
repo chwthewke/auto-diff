@@ -5,7 +5,8 @@ import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.Matchers
 import org.scalatest.WordSpec
 
-class TupleSpec extends WordSpec with Matchers with TypeCheckedTripleEquals with DiffOps {
+class TupleSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
+  import DiffOps._
 
   "Diffing tuples" when {
     "containing primitive types" when {

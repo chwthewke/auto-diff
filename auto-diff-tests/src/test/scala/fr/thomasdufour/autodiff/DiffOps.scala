@@ -13,3 +13,5 @@ trait DiffOps {
   }
 
 }
+
+object DiffOps extends DiffOps

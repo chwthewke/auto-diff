@@ -9,13 +9,6 @@ import org.scalatest.WordSpec
 
 class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
 
-  /*
-  def obj( tag: String, diff: TaggedDifference, diffs: TaggedDifference* ): ObjectDifference =
-    ObjectDifference( tag, NonEmptyList( diff, diffs.toList ) )
-
-  def tag( tag: String, diff: Difference ): TaggedDifference =
-    TaggedDifference( tag, diff )
-   */
   import model._
 
   "Deriving a generic Diff instance" when {
@@ -64,22 +57,6 @@ class DiffSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
         Diff[AnEnum]
       }
     }
-
-    /*
-    "type has java.time member" should {
-      "succeed with the appropriate import" in {
-
-        Diff[WithTime]
-      }
-    }
-
-    "type is a java class and we use fallback" should {
-      "succeed" in {
-
-        Diff[java.util.UUID]
-      }
-    }
-   */
 
   }
   /*

@@ -41,7 +41,6 @@ object Boilerplate {
      """.stripMargin
   }
 
-  // FIXME forProduct's Diff args should be Lazy
   def genForProduct( n: Int ): String = {
     val funcName    = s"forProduct$n"
     val typeParams  = 1.to( n ).map( i => s"A$i" ).mkString( "[A, ", ", ", "]" )

@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/chwthewke/auto-diff.svg?branch=master)](https://travis-ci.org/chwthewke/auto-diff)
+[![codecov.io](http://codecov.io/github/chwthewke/auto-diff/coverage.svg?branch=devel)](http://codecov.io/github/chwthewke/auto-diff?branch=devel)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/fr.thomasdufour/auto-diff-core_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/fr.thomasdufour/auto-diff-core_2.12)
 
 # Structural diff for scala types
@@ -20,31 +21,23 @@ of `Difference` values.
 # Current status
 
 - `Diff` instances can be derived for:
-  - primitive types as well as `String`,
-  - a selection of usual collection types, including `Map`
-  - case classes and sealed hierarchies (via shapeless)
-  - enumeratum `Enum`s
+  - primitive types as well as `String`, `UUID`,
+  - a selection of usual collection-like types, including `Map`, `Option` and `Either`
+  - enumeratum `Enum`s, via `autodiff-enumeratum`.
 
-- Individual fields of case classes can have their diffing method customized.
+- Generic derivation (for `LabelledGeneric` types) is provided by `autodiff-generic`, and is opt-in like e.g. in [circe](https://circe.io)
+  - either automatic with `import fr.thomasdufour.autodiff.generic.auto._`
+  - or semi-automatic with `import fr.thomasdufour.autodiff.generic.semiauto._` and using `deriveDiff`
 
-- the `Difference` type is still work-in-progress, with a simple colourized
-  textual representation and no convenience methods to speak of.
+- The `Difference` type has only a couple textual representation options 
+  and no convenience methods to speak of.
 
 # Future work
 
-- Automatic derivation is not so practical, we should move to semi-automatic
-  derivation akin to circe's.
-- Deriving `Diff` for `Map`s.
-- `Option`, `Either` and `Validated` are diffed like any other ADTs, where a
-  special purpose instance might serve better.
 - Further API exploration for the "front-end", including test framework
   integration.
-- Exploring the use of macros to improve `custom`, as well as possibly
-  compilation length.
-- Extracting the parts that depend on third-party libraries to other modules,
-  including the `java.time` part if we cross-build for scala 2.11.
+- Improve test coverage
 
 # Credits
 
-[xdotai/diff](https://github.com/xdotai/diff) for inspiration. This code ended
-up resembling that more than anticipated.
+[xdotai/diff](https://github.com/xdotai/diff) for inspiration.
