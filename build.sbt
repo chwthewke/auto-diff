@@ -108,5 +108,6 @@ val `auto-diff-tests` = project
 val `auto-diff` = project
   .in( file( "." ) )
   .settings( sharedSettings )
+  .settings( Dependencies.overrides )
   .settings( noPublishSettings )
   .aggregate( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-scalatest`, `auto-diff-tests` )
