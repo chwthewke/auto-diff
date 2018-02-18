@@ -1,12 +1,13 @@
 import sbt._
 import sbt.Keys._
-import sbtbuildinfo._, BuildInfoKeys._
+import sbtbuildinfo._
+import BuildInfoKeys._
 import sbtrelease.Version
 
 object SbtBuildInfo {
   val shortVersion = SettingKey[String]( "short-version" )
 
-  def buildSettings( objectName: String, targetPackage: String = "net.chwthewke.autodiff" ) =
+  def buildSettings( objectName: String, targetPackage: String = "fr.thomasdufour.autodiff" ) =
     BuildInfoPlugin.projectSettings ++ Seq(
       buildInfoPackage := targetPackage,
       buildInfoObject := objectName,

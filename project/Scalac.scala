@@ -30,7 +30,9 @@ object Scalac {
     opts.filterNot( _ == "-Ywarn-value-discard" )
 
   def forConsole( opts: Seq[String] ): Seq[String] =
-    opts.filterNot( Set( "-Xlint", "-Ywarn-unused-import" ) )
+    opts
+      .filterNot( Set( "-Ywarn-unused-import", "-Xfatal-warnings" ) )
+      .filterNot( _.startsWith( "-Xlint" ) )
 
   val settings: Seq[Def.Setting[_]] =
     // format: off
