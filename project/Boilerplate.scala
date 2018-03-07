@@ -62,7 +62,7 @@ object Boilerplate {
 
     val showParts =
       1.to( n )
-        .map( i => s"""s"$$field$i = D$i.show(v$i)"""" )
+        .map( i => s"""s"$$field$i = $${D$i.value.show(v$i)}"""" )
         .mkString( "List(", ", ", """).mkString( s"$name(", ", ", ")")""" )
 
     val body =
