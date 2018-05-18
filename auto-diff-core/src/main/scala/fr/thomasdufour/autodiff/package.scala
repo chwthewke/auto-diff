@@ -1,7 +1,7 @@
 package fr.thomasdufour
 
 import cats.syntax.either._
-import mouse.all.optionSyntaxMouse
+import mouse.all.anySyntaxMouse
 
 package object autodiff {
   import scala.collection.{immutable => sci}

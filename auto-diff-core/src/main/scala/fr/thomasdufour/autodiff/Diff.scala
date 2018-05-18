@@ -1,7 +1,7 @@
 package fr.thomasdufour.autodiff
 
 import cats.Show
-import cats.functor.Contravariant
+import cats.Contravariant
 import cats.kernel.Eq
 import cats.syntax.option._
 import java.util.UUID
