@@ -1,11 +1,11 @@
 package fr.thomasdufour.autodiff
 
+import cats.Semigroup
 import cats.data.NonEmptyList
 import cats.instances.list._
 import cats.instances.option._
-import cats.instances.string._
-import cats.instances.vector._
 import cats.syntax.foldable._
+import cats.syntax.reducible._
 
 sealed trait Difference
 
@@ -26,6 +26,20 @@ object Difference {
   final case class Keyed[K]( key: K, showKey: K => String, difference: Difference )
   final case class Index( index: Int, difference: Difference )
 
+  case class Line( val line: String ) extends AnyVal
+  object Line {
+    implicit val lineSemigroup: Semigroup[Line] = new Semigroup[Line] {
+      @inline
+      override def combine( x: Line, y: Line ): Line = Line( x.line + "\n" + y.line )
+    }
+
+  }
+
+  implicit class LineOps( val self: ( String, Int ) ) extends AnyVal {
+    def indent( width: Int ): Line =
+      Line( (if (self._2 == 0) "" else (" " * (width * (self._2 - 1)) + "- ")) + self._1 )
+  }
+
   case class Pretty( indentWidth: Int, color: Boolean ) {
     private def colorize( ansi: String )( str: String ): String =
       if (color) ansi + str + Console.RESET else str
@@ -36,35 +50,32 @@ object Difference {
     private def prettyValueDiff[A]( left: String, right: String ): String =
       colorize( Console.GREEN )( left ) + " -> " + colorize( Console.RED )( right )
 
-    private def prettyIndented( ind: Int, diff: Difference ): Vector[( String, Int )] = diff match {
-      case Value( l, r, s )      => Vector( ( prettyValueDiff( s( l ), s( r ) ), ind ) )
-      case Tagged( t, d )        => Vector( ( t, ind ) ) ++ prettyIndented( ind + 1, d )
-      case Expected( l, r, s )   => Vector( ( prettyValueDiff( s( l ), r ), ind ) )
-      case Unexpected( l, r, s ) => Vector( ( prettyValueDiff( l, s( r ) ), ind ) )
-      case Coproduct( n, d )     => Vector( ( s"in $n", ind ) ) ++ prettyIndented( ind + 1, d )
-      case Product( n, fs )      => Vector( ( s"in $n", ind ) ) ++ fs.foldMap( prettyField( ind + 1, _ ) )
-      case Tuple( n, ixs )       => Vector( ( s"in $n", ind ) ) ++ ixs.foldMap( prettyIndex( ind + 1, _ ) )
-      case Seq( n, ixs )         => Vector( ( s"in $n", ind ) ) ++ ixs.foldMap( prettyIndex( ind + 1, _ ) )
-      case Set( n, d )           => Vector( ( s"in $n", ind ) ) ++ prettyIndented( ind + 1, d )
+    private def prettyIndented( ind: Int, diff: Difference ): NonEmptyList[( String, Int )] = diff match {
+      case Value( l, r, s )      => NonEmptyList.of( ( prettyValueDiff( s( l ), s( r ) ), ind ) )
+      case Tagged( t, d )        => ( t, ind ) :: prettyIndented( ind + 1, d )
+      case Expected( l, r, s )   => NonEmptyList.of( ( prettyValueDiff( s( l ), r ), ind ) )
+      case Unexpected( l, r, s ) => NonEmptyList.of( ( prettyValueDiff( l, s( r ) ), ind ) )
+      case Coproduct( n, d )     => ( s"in $n", ind ) :: prettyIndented( ind + 1, d )
+      case Product( n, fs )      => ( s"in $n", ind ) :: fs.reduceMap( prettyField( ind + 1, _ ) )
+      case Tuple( n, ixs )       => ( s"in $n", ind ) :: ixs.reduceMap( prettyIndex( ind + 1, _ ) )
+      case Seq( n, ixs )         => ( s"in $n", ind ) :: ixs.reduceMap( prettyIndex( ind + 1, _ ) )
+      case Set( n, d )           => ( s"in $n", ind ) :: prettyIndented( ind + 1, d )
       case Map( n, ks, ds ) =>
-        Vector( ( s"in $n", ind ) ) ++
-          ks.foldMap( prettyIndented( ind + 1, _ ) ) ++
-          ds.foldMap( prettyKeyed( ind + 1, _ ) )
+        NonEmptyList( ( s"in $n", ind ),
+                     (ks.foldMap( prettyIndented( ind + 1, _ ).toList ) ) ++
+                       (ds.foldMap( prettyKeyed( ind + 1, _ ).toList ) ) )
     }
 
-    private def prettyField( ind: Int, f: Field ): Vector[( String, Int )] =
-      Vector( ( f.name, ind ) ) ++ prettyIndented( ind + 1, f.difference )
+    private def prettyField( ind: Int, f: Field ): NonEmptyList[( String, Int )] =
+      ( f.name, ind ) :: prettyIndented( ind + 1, f.difference )
 
-    private def prettyIndex( ind: Int, ix: Index ): Vector[( String, Int )] =
-      Vector( ( s"[${ix.index}]", ind ) ) ++ prettyIndented( ind + 1, ix.difference )
+    private def prettyIndex( ind: Int, ix: Index ): NonEmptyList[( String, Int )] =
+      ( s"[${ix.index}]", ind ) :: prettyIndented( ind + 1, ix.difference )
 
-    private def prettyKeyed[K]( ind: Int, keyed: Keyed[K] ): Vector[( String, Int )] =
-      Vector( ( s"at ${keyed.showKey( keyed.key )}", ind ) ) ++ prettyIndented( ind + 1, keyed.difference )
+    private def prettyKeyed[K]( ind: Int, keyed: Keyed[K] ): NonEmptyList[( String, Int )] =
+      ( s"at ${keyed.showKey( keyed.key )}", ind ) :: prettyIndented( ind + 1, keyed.difference )
 
-    def show( d: Difference ): String =
-      prettyIndented( 0, d ).foldMap {
-        case ( s, n ) => (" " * (indentWidth * n)) + "- " + s + "\n"
-      }
+    def show( d: Difference ): String = prettyIndented( 0, d ).reduceMap( _.indent( indentWidth ) ).line
 
   }
 

@@ -22,4 +22,6 @@ object scalatest {
         s"autodiff-equivalent to ${D.show( expected )}"
     }
 
+  def ~=[A]( expected: A )( implicit D: Diff[A] ): Matcher[A] = matchWithAutoDiff( expected )
+
 }
