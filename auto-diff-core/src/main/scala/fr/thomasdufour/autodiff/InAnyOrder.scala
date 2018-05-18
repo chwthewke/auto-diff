@@ -7,7 +7,7 @@ object InAnyOrder {
 
   implicit def anyOrderDiff[A]( implicit D: Diff[A] ): Diff[InAnyOrder[A]] =
     new Diff[InAnyOrder[A]] {
-      override def show( a: InAnyOrder[A] ): String = DiffMatch.showUnordered( D, a.coll )
+      override def show( a: InAnyOrder[A] ): String = DiffMatch.showUnordered( "" )( D, a.coll )
 
       override def apply( left: InAnyOrder[A], right: InAnyOrder[A] ): Option[Difference] =
         DiffMatch.of( left.coll, right.coll ).difference

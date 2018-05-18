@@ -20,8 +20,8 @@ object DiffMatch {
     toCollectionDiff( removed, added, matches )( D )
   }
 
-  def showUnordered[A]( D: Diff[A], values: Traversable[A] ): String =
-    values.map( D.show ).mkString( "{ ", ", ", "... }" )
+  def showUnordered[A]( ellipsis: String )( D: Diff[A], values: Traversable[A] ): String =
+    values.map( D.show ).mkString( "{ ", ", ", s"$ellipsis }" )
 
   private def removeFirst[A]( D: Diff[A], x: A )( v: Vector[A] ): Option[( A, Vector[A] )] =
     v.indexWhere( D( x, _ ).isEmpty ) match {
@@ -35,7 +35,7 @@ object DiffMatch {
       if (removed.isEmpty && added.isEmpty)
         none
       else
-        Difference.Value[Vector[A]]( removed, added, showUnordered( diff, _ ) ).some
+        Difference.Value[Vector[A]]( removed, added, showUnordered( "..." )( diff, _ ) ).some
 
     DiffMatch( difference, matches )
   }
