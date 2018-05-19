@@ -15,11 +15,11 @@ object DiffMatch {
 
     val ( removed, added, matches, mismatches ) = classify( left, right )
 
-    val unmatchedDifference: Option[Difference.Value[List[A]]] =
+    val unmatchedDifference: Option[Difference.Value] =
       if (removed.isEmpty && added.isEmpty)
         none
       else
-        Difference.Value[List[A]]( removed, added, showUnordered( D, _ ) ).some
+        Difference.Value( showUnordered( D, removed ), showUnordered( D, added ) ).some
 
     val mismatchDifferences: Option[NonEmptyList[Difference]] =
       NonEmptyList.fromList( mismatches )

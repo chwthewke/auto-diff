@@ -50,7 +50,7 @@ trait LowPriorityCoproductDiffImplicits {
         ( left, right ) match {
           case ( Inl( l ), Inl( r ) ) => V.value( l, r )
           case ( Inr( l ), Inr( r ) ) => T( l, r )
-          case _                      => Difference.Value( left, right, show ).some
+          case _                      => Difference.Value( show( left ), show( right ) ).some
         }
 
       override def show( value: :+:[FieldType[K, V], T] ): String =

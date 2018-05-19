@@ -20,9 +20,9 @@ private[autodiff] object IndexedSeqDiff {
     ( at[A, CC]( ix, left ), at[A, CC]( ix, right ) ) match {
       case ( None, None ) => acc.reverse
       case ( Some( l ), None ) =>
-        diffIx[A, CC]( Difference.Index( ix, Difference.Expected( l, eos, D.show ) ) :: acc, ix + 1, left, right )
+        diffIx[A, CC]( Difference.Index( ix, Difference.Value( D.show( l ), eos ) ) :: acc, ix + 1, left, right )
       case ( None, Some( r ) ) =>
-        diffIx[A, CC]( Difference.Index( ix, Difference.Unexpected( eos, r, D.show ) ) :: acc, ix + 1, left, right )
+        diffIx[A, CC]( Difference.Index( ix, Difference.Value( eos, D.show( r ) ) ) :: acc, ix + 1, left, right )
       case ( Some( l ), Some( r ) ) =>
         diffIx[A, CC]( D.apply( l, r ).map( Difference.Index( ix, _ ) ).toList ++ acc, ix + 1, left, right )
     }

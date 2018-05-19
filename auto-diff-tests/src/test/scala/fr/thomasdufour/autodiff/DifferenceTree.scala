@@ -51,15 +51,13 @@ object DifferenceTree {
   import Difference._
 
   def fromDifference( d: Difference ): DifferenceTree = d match {
-    case Value( l, r, s )      => V( s( l ), s( r ) )
-    case Expected( l, r, s )   => L( s( l ), r )
-    case Unexpected( l, r, s ) => R( l, s( r ) )
-    case Tagged( t, d )        => T( T.Gen, t, fromDifference( d ) )
-    case Coproduct( n, d )     => T( T.Coproduct, n, fromDifference( d ) )
-    case Product( n, fs )      => F( n, fs.map( f => T.Field( f.name, fromDifference( f.difference ) ) ) )
-    case Tuple( n, fs )        => I( T.Tuple, n, fs.map( f => T.Index( f.index, fromDifference( f.difference ) ) ) )
-    case Seq( n, ds )          => I( T.Seq, n, ds.map( d => T.Index( d.index, fromDifference( d.difference ) ) ) )
-    case Set( n, d )           => T( T.Set, n, fromDifference( d ) )
+    case Value( l, r )     => V( l, r )
+    case Tagged( t, d )    => T( T.Gen, t, fromDifference( d ) )
+    case Coproduct( n, d ) => T( T.Coproduct, n, fromDifference( d ) )
+    case Product( n, fs )  => F( n, fs.map( f => T.Field( f.name, fromDifference( f.difference ) ) ) )
+    case Tuple( n, fs )    => I( T.Tuple, n, fs.map( f => T.Index( f.index, fromDifference( f.difference ) ) ) )
+    case Seq( n, ds )      => I( T.Seq, n, ds.map( d => T.Index( d.index, fromDifference( d.difference ) ) ) )
+    case Set( n, d )       => T( T.Set, n, fromDifference( d ) )
     case Unordered( d ) =>
       U( d.left.map( fromDifference ), d.right.fold( List.empty[DifferenceTree] )( _.toList.map( fromDifference ) ) )
     case Map( n, ks, ds ) =>

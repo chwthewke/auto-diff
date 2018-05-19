@@ -50,7 +50,7 @@ object Diff extends TupleDiff with ProductDiff with MidPriorityDiffImplicits {
   def explicitEqShow[A]( eqv: ( A, A ) => Boolean, show: A => String ): Diff[A] = {
     def diff( l: A, r: A ): Option[Difference] =
       if (eqv( l, r )) none
-      else Difference.Value( l, r, show ).some
+      else Difference.Value( show( l ), show( r ) ).some
 
     Diff.instance( diff, show )
   }
@@ -80,7 +80,7 @@ object Diff extends TupleDiff with ProductDiff with MidPriorityDiffImplicits {
     override def apply( left: Option[A], right: Option[A] ): Option[Difference] = ( left, right ) match {
       case ( None, None )           => None
       case ( Some( l ), Some( r ) ) => D.apply( l, r ).map( Difference.Coproduct( "Option", _ ) )
-      case ( _, _ )                 => Difference.Coproduct( "Option", Difference.Value( left, right, show ) ).some
+      case ( _, _ )                 => Difference.Coproduct( "Option", Difference.Value( show( left ), show( right ) ) ).some
     }
   }
 
@@ -91,7 +91,7 @@ object Diff extends TupleDiff with ProductDiff with MidPriorityDiffImplicits {
     override def apply( left: Either[A, B], right: Either[A, B] ): Option[Difference] = ( left, right ) match {
       case ( Left( l ), Left( r ) )   => DA.apply( l, r ).map( Difference.Coproduct( "Either", _ ) )
       case ( Right( l ), Right( r ) ) => DB.apply( l, r ).map( Difference.Coproduct( "Either", _ ) )
-      case ( _, _ )                   => Difference.Coproduct( "Either", Difference.Value( left, right, show ) ).some
+      case ( _, _ )                   => Difference.Coproduct( "Either", Difference.Value( show( left ), show( right ) ) ).some
     }
   }
 

@@ -12,17 +12,14 @@ sealed trait Difference
 
 object Difference {
 
-  // TODO apply show before packing Value, Expected, Unexpected (& merge them)
-  final case class Value[A]( left: A, right: A, show: A => String )                    extends Difference
-  final case class Tagged( tag: String, diff: Difference )                             extends Difference
-  final case class Expected[A]( left: A, right: String, show: A => String )            extends Difference
-  final case class Unexpected[A]( left: String, right: A, show: A => String )          extends Difference
-  final case class Unordered[A]( diff: Ior[Value[List[A]], NonEmptyList[Difference]] ) extends Difference
-  final case class Coproduct( name: String, difference: Difference )                   extends Difference
-  final case class Product( name: String, fields: NonEmptyList[Field] )                extends Difference
-  final case class Tuple( name: String, fields: NonEmptyList[Index] )                  extends Difference
-  final case class Seq( name: String, diffs: NonEmptyList[Index] )                     extends Difference
-  final case class Set( name: String, diff: Difference )                               extends Difference
+  final case class Value( left: String, right: String )                       extends Difference
+  final case class Tagged( tag: String, diff: Difference )                    extends Difference
+  final case class Unordered[A]( diff: Ior[Value, NonEmptyList[Difference]] ) extends Difference
+  final case class Coproduct( name: String, difference: Difference )          extends Difference
+  final case class Product( name: String, fields: NonEmptyList[Field] )       extends Difference
+  final case class Tuple( name: String, fields: NonEmptyList[Index] )         extends Difference
+  final case class Seq( name: String, diffs: NonEmptyList[Index] )            extends Difference
+  final case class Set( name: String, diff: Difference )                      extends Difference
   // TODO Ior
   final case class Map[K]( name: String, keys: Option[Set], diffs: List[Keyed[K]] ) extends Difference
 
@@ -53,19 +50,17 @@ object Difference {
     private def prettyValues( left: String, right: String ): String =
       colorize( Console.GREEN )( left ) + " -> " + colorize( Console.RED )( right )
 
-    private def prettyValueDiff[A]( ind: Int, v: Value[A] ): ( String, Int ) =
-      ( prettyValues( v.show( v.left ), v.show( v.right ) ), ind )
+    private def prettyValueDiff[A]( ind: Int, v: Value ): ( String, Int ) =
+      ( prettyValues( v.left, v.right ), ind )
 
     private def prettyIndented( ind: Int, diff: Difference ): NonEmptyList[( String, Int )] = diff match {
-      case v @ Value( _, _, _ )  => NonEmptyList.of( prettyValueDiff( ind, v ) )
-      case Tagged( t, d )        => ( t, ind ) :: prettyIndented( ind + 1, d )
-      case Expected( l, r, s )   => NonEmptyList.of( ( prettyValues( s( l ), r ), ind ) )
-      case Unexpected( l, r, s ) => NonEmptyList.of( ( prettyValues( l, s( r ) ), ind ) )
-      case Coproduct( n, d )     => ( s"in $n", ind ) :: prettyIndented( ind + 1, d )
-      case Product( n, fs )      => ( s"in $n", ind ) :: fs.reduceMap( prettyField( ind + 1, _ ) )
-      case Tuple( n, ixs )       => ( s"in $n", ind ) :: ixs.reduceMap( prettyIndex( ind + 1, _ ) )
-      case Seq( n, ixs )         => ( s"in $n", ind ) :: ixs.reduceMap( prettyIndex( ind + 1, _ ) )
-      case Set( n, d )           => ( s"in $n", ind ) :: prettyIndented( ind + 1, d )
+      case v @ Value( _, _ ) => NonEmptyList.of( prettyValueDiff( ind, v ) )
+      case Tagged( t, d )    => ( t, ind ) :: prettyIndented( ind + 1, d )
+      case Coproduct( n, d ) => ( s"in $n", ind ) :: prettyIndented( ind + 1, d )
+      case Product( n, fs )  => ( s"in $n", ind ) :: fs.reduceMap( prettyField( ind + 1, _ ) )
+      case Tuple( n, ixs )   => ( s"in $n", ind ) :: ixs.reduceMap( prettyIndex( ind + 1, _ ) )
+      case Seq( n, ixs )     => ( s"in $n", ind ) :: ixs.reduceMap( prettyIndex( ind + 1, _ ) )
+      case Set( n, d )       => ( s"in $n", ind ) :: prettyIndented( ind + 1, d )
       case Unordered( d ) =>
         val contents =
           d.bimap(

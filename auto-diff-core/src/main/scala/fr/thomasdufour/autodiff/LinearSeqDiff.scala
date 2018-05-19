@@ -22,9 +22,9 @@ private[autodiff] object LinearSeqDiff {
       case ( Some( ( lh, lt ) ), Some( ( rh, rt ) ) ) =>
         diffIx[A, CC]( D.apply( lh, rh ).map( Difference.Index( ix, _ ) ).toList ++ acc, ix + 1, lt, rt )
       case ( Some( ( h, t ) ), None ) =>
-        diffIx[A, CC]( Difference.Index( ix, Difference.Expected( h, eos, D.show ) ) :: acc, ix + 1, t, right )
+        diffIx[A, CC]( Difference.Index( ix, Difference.Value( D.show( h ), eos ) ) :: acc, ix + 1, t, right )
       case ( None, Some( ( h, t ) ) ) =>
-        diffIx[A, CC]( Difference.Index( ix, Difference.Unexpected( eos, h, D.show ) ) :: acc, ix + 1, left, t )
+        diffIx[A, CC]( Difference.Index( ix, Difference.Value( eos, D.show( h ) ) ) :: acc, ix + 1, left, t )
     }
   }
 
