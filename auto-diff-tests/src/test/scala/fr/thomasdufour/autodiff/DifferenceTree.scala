@@ -7,7 +7,6 @@ import cats.data.NonEmptyList
   */
 sealed trait DifferenceTree
 
-// TODO merge V, L, R with a power type?
 case object Z                                                             extends DifferenceTree
 final case class V( left: String, right: String )                         extends DifferenceTree
 final case class L( left: String, right: String )                         extends DifferenceTree
@@ -60,10 +59,14 @@ object DifferenceTree {
     case Set( n, d )       => T( T.Set, n, fromDifference( d ) )
     case Unordered( d ) =>
       U( d.left.map( fromDifference ), d.right.fold( List.empty[DifferenceTree] )( _.toList.map( fromDifference ) ) )
-    case Map( n, ks, ds ) =>
-      M( n,
-        ks.map( k => T( T.Set, k.name, fromDifference( k.diff ) ) ),
-        ds.map( d => T.Keyed( d.showKey( d.key ), fromDifference( d.difference ) ) ) )
+    case Map( n, ds ) =>
+      M(
+        n,
+        ds.left.map( k => T( T.Set, k.name, fromDifference( k.diff ) ) ),
+        ds.right
+          .fold( List.empty[Keyed] )( _.toList )
+          .map( d => T.Keyed( d.key, fromDifference( d.difference ) ) )
+      )
 
   }
 

@@ -3,28 +3,24 @@ package fr.thomasdufour.autodiff
 import cats.Semigroup
 import cats.data.Ior
 import cats.data.NonEmptyList
-import cats.instances.list._
-import cats.instances.option._
-import cats.syntax.foldable._
 import cats.syntax.reducible._
 
 sealed trait Difference
 
 object Difference {
 
-  final case class Value( left: String, right: String )                       extends Difference
-  final case class Tagged( tag: String, diff: Difference )                    extends Difference
-  final case class Unordered[A]( diff: Ior[Value, NonEmptyList[Difference]] ) extends Difference
-  final case class Coproduct( name: String, difference: Difference )          extends Difference
-  final case class Product( name: String, fields: NonEmptyList[Field] )       extends Difference
-  final case class Tuple( name: String, fields: NonEmptyList[Index] )         extends Difference
-  final case class Seq( name: String, diffs: NonEmptyList[Index] )            extends Difference
-  final case class Set( name: String, diff: Difference )                      extends Difference
-  // TODO Ior
-  final case class Map[K]( name: String, keys: Option[Set], diffs: List[Keyed[K]] ) extends Difference
+  final case class Value( left: String, right: String )                      extends Difference
+  final case class Tagged( tag: String, diff: Difference )                   extends Difference
+  final case class Unordered( diff: Ior[Value, NonEmptyList[Difference]] )   extends Difference
+  final case class Coproduct( name: String, difference: Difference )         extends Difference
+  final case class Product( name: String, fields: NonEmptyList[Field] )      extends Difference
+  final case class Tuple( name: String, fields: NonEmptyList[Index] )        extends Difference
+  final case class Seq( name: String, diffs: NonEmptyList[Index] )           extends Difference
+  final case class Set( name: String, diff: Difference )                     extends Difference
+  final case class Map( name: String, diffs: Ior[Set, NonEmptyList[Keyed]] ) extends Difference
 
   final case class Field( name: String, difference: Difference )
-  final case class Keyed[K]( key: K, showKey: K => String, difference: Difference )
+  final case class Keyed( key: String, difference: Difference )
   final case class Index( index: Int, difference: Difference )
 
   case class Line( val line: String ) extends AnyVal
@@ -72,10 +68,11 @@ object Difference {
           NonEmptyList.of( ( "{ " + contents.head._1 + " }", ind ) )
         else
           ( "{", ind ) :: contents ::: NonEmptyList.of( ( "}", ind ) )
-      case Map( n, ks, ds ) =>
-        NonEmptyList( ( s"in $n", ind ),
-                     (ks.foldMap( prettyIndented( ind + 1, _ ).toList ) ) ++
-                       (ds.foldMap( prettyKeyed( ind + 1, _ ).toList ) ) )
+      case Map( n, ds ) =>
+        ( s"in $n", ind ) ::
+          ds
+          .bimap( prettyIndented( ind + 1, _ ), _.reduceMap( prettyKeyed( ind + 1, _ ) ) )
+          .fold( identity, identity, _ ::: _ )
     }
 
     private def prettyField( ind: Int, f: Field ): NonEmptyList[( String, Int )] =
@@ -84,8 +81,8 @@ object Difference {
     private def prettyIndex( ind: Int, ix: Index ): NonEmptyList[( String, Int )] =
       ( s"[${ix.index}]", ind ) :: prettyIndented( ind + 1, ix.difference )
 
-    private def prettyKeyed[K]( ind: Int, keyed: Keyed[K] ): NonEmptyList[( String, Int )] =
-      ( s"at ${keyed.showKey( keyed.key )}", ind ) :: prettyIndented( ind + 1, keyed.difference )
+    private def prettyKeyed[K]( ind: Int, keyed: Keyed ): NonEmptyList[( String, Int )] =
+      ( s"at ${keyed.key}", ind ) :: prettyIndented( ind + 1, keyed.difference )
 
     def show( d: Difference ): String = prettyIndented( 0, d ).reduceMap( _.indent( indentWidth ) ).line
 

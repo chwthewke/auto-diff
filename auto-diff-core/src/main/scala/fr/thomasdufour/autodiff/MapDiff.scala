@@ -1,6 +1,8 @@
 package fr.thomasdufour.autodiff
 
-import cats.syntax.option._
+import cats.data.Ior
+import cats.data.NonEmptyList
+
 import scala.collection.immutable._
 
 object MapDiff {
@@ -20,13 +22,12 @@ object MapDiff {
                 leftValue  <- left.get( leftKey )
                 rightValue <- right.get( rightKey )
                 diff       <- DV( leftValue, rightValue )
-              } yield Difference.Keyed( leftKey, DK.show, diff )
+              } yield Difference.Keyed( DK.show( leftKey ), diff )
           }
 
-        if (keyDiff.isEmpty && valueDiffs.isEmpty)
-          none
-        else
-          Difference.Map( name, keyDiff.map( Difference.Set( "key set", _ ) ), valueDiffs ).some
+        Ior
+          .fromOptions( keyDiff.map( Difference.Set( "key set", _ ) ), NonEmptyList.fromList( valueDiffs ) )
+          .map( Difference.Map( name, _ ) )
       }
 
       override def show( a: CC ): String =
