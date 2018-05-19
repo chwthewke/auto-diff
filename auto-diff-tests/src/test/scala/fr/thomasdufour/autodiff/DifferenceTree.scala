@@ -2,15 +2,21 @@ package fr.thomasdufour.autodiff
 
 import cats.data.NonEmptyList
 
+/**
+  * Untyped difference trees used as a testable representation of Difference.
+  */
 sealed trait DifferenceTree
-case object Z                                                            extends DifferenceTree
-final case class V( left: String, right: String )                        extends DifferenceTree
-final case class L( left: String, right: String )                        extends DifferenceTree
-final case class R( left: String, right: String )                        extends DifferenceTree
-final case class T( kind: T.K, name: String, d: DifferenceTree )         extends DifferenceTree
-final case class I( kind: T.I, name: String, ds: NonEmptyList[T.Index] ) extends DifferenceTree
-final case class F( name: String, ds: NonEmptyList[T.Field] )            extends DifferenceTree
-final case class M( name: String, keys: Option[T], ds: List[T.Keyed] )   extends DifferenceTree
+
+// TODO merge V, L, R with a power type?
+case object Z                                                             extends DifferenceTree
+final case class V( left: String, right: String )                         extends DifferenceTree
+final case class L( left: String, right: String )                         extends DifferenceTree
+final case class R( left: String, right: String )                         extends DifferenceTree
+final case class U( d: Option[DifferenceTree], ms: List[DifferenceTree] ) extends DifferenceTree
+final case class T( kind: T.K, name: String, d: DifferenceTree )          extends DifferenceTree
+final case class I( kind: T.I, name: String, ds: NonEmptyList[T.Index] )  extends DifferenceTree
+final case class F( name: String, ds: NonEmptyList[T.Field] )             extends DifferenceTree
+final case class M( name: String, keys: Option[T], ds: List[T.Keyed] )    extends DifferenceTree
 
 object I {
   def apply( kind: T.I, name: String, index0: ( Int, DifferenceTree ), indexes: ( Int, DifferenceTree )* ): I = {
@@ -54,6 +60,8 @@ object DifferenceTree {
     case Tuple( n, fs )        => I( T.Tuple, n, fs.map( f => T.Index( f.index, fromDifference( f.difference ) ) ) )
     case Seq( n, ds )          => I( T.Seq, n, ds.map( d => T.Index( d.index, fromDifference( d.difference ) ) ) )
     case Set( n, d )           => T( T.Set, n, fromDifference( d ) )
+    case Unordered( d ) =>
+      U( d.left.map( fromDifference ), d.right.fold( List.empty[DifferenceTree] )( _.toList.map( fromDifference ) ) )
     case Map( n, ks, ds ) =>
       M( n,
         ks.map( k => T( T.Set, k.name, fromDifference( k.diff ) ) ),

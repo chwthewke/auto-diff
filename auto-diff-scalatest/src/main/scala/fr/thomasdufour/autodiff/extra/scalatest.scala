@@ -5,6 +5,8 @@ import org.scalatest.matchers.MatchResult
 import org.scalatest.matchers.Matcher
 
 object scalatest {
+  // TODO configure presence of expected, actual (via implicit?)
+
   def matchWithAutoDiff[A]( expected: A )( implicit D: Diff[A] ): Matcher[A] =
     new Matcher[A] {
       private def message( actual: A, difference: Difference ): String =
