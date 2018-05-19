@@ -21,11 +21,6 @@ object Dependencies {
   val cats: D = group( "org.typelevel", catsVersion )( "cats-core" )() ++
     (group( "org.typelevel" %% "mouse" % "0.17" )() map (_.exclude( "org.typelevel", "cats_2.12" ) ))
 
-  val monocleVersion = "1.5.0-cats"
-
-  val monocle: D =
-    group( "com.github.julien-truffaut", monocleVersion )( "monocle-core", "monocle-macro" )()
-
   val shapeless: D = group( "com.chuusai" %% "shapeless" % "2.3.3" )()
 
   val scalatestM: ModuleID = "org.scalatest" %% "scalatest" % "3.0.5"
