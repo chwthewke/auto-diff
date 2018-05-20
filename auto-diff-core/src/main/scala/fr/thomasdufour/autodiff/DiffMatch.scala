@@ -89,8 +89,6 @@ object DiffMatch {
       override def isDefault: Boolean = true
     }
 
-    def apply[A]( implicit ev: Hint[A] ): Hint[A] = ev
-
     def byEqShow[A]( implicit E: Eq[A], S: Show[A] ): Hint[A] = new Hint[A] {
       override def apply( left: A, right: A ): Boolean = E.eqv( left, right )
 
