@@ -2,8 +2,19 @@ package fr.thomasdufour.autodiff
 
 import cats.Show
 import cats.Contravariant
+import cats.data.Chain
+import cats.data.NonEmptyChain
+import cats.data.NonEmptyList
+import cats.data.NonEmptyVector
 import cats.kernel.Eq
 import cats.syntax.option._
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.time.OffsetTime
+import java.time.ZonedDateTime
 import java.util.UUID
 import scala.collection.immutable.HashMap
 import scala.collection.immutable.HashSet
@@ -61,6 +72,7 @@ object Diff extends TupleDiff with ProductDiff with MidPriorityDiffImplicits {
   def defaultEqShow[A]: Diff[A] =
     explicitEqShow( _ == _, _.toString )
 
+  // basic types
   implicit val booleanDiff: Diff[Boolean] = defaultEqShow
   implicit val byteDiff: Diff[Byte]       = defaultEqShow
   implicit val shortDiff: Diff[Short]     = defaultEqShow
@@ -72,6 +84,15 @@ object Diff extends TupleDiff with ProductDiff with MidPriorityDiffImplicits {
   implicit val stringDiff: Diff[String]   = defaultEqShow
   implicit val uuidDiff: Diff[UUID]       = defaultEqShow
   implicit val unitDiff: Diff[Unit]       = defaultEqShow
+
+  // java.time types
+  implicit val instantDiff: Diff[Instant]               = defaultEqShow
+  implicit val localDateDiff: Diff[LocalDate]           = defaultEqShow
+  implicit val localTimeDiff: Diff[LocalTime]           = defaultEqShow
+  implicit val localDateTime: Diff[LocalDateTime]       = defaultEqShow
+  implicit val offsetTimeDiff: Diff[OffsetTime]         = defaultEqShow
+  implicit val offsetDateTimeDiff: Diff[OffsetDateTime] = defaultEqShow
+  implicit val zonedDateTimeDiff: Diff[ZonedDateTime]   = defaultEqShow
 
   implicit def optionDiff[A]( implicit D: Diff[A] ): Diff[Option[A]] = new Diff[Option[A]] {
     override def show( value: Option[A] ): String =
@@ -95,8 +116,8 @@ object Diff extends TupleDiff with ProductDiff with MidPriorityDiffImplicits {
     }
   }
 
-  def inAnyOrder[A, CC[x] <: Iterable[x]]( implicit D: Diff[A], H: DiffMatch.Hint[A] ): Diff[CC[A]] =
-    InAnyOrder.anyOrderDiff[A].contramap( cc => InAnyOrder( cc ) )
+  def inAnyOrder[A, CC[x]]( implicit D: Diff[A], H: DiffMatch.Hint[A], D1: InAnyOrder.Diffable[CC] ): Diff[CC[A]] =
+    InAnyOrder.anyOrderDiff[A].contramap( cc => InAnyOrder.diffable( cc ) )
 
   implicit def listDiff[A]( implicit D: Diff[A] ): Diff[List[A]]     = LinearSeqDiff.listDiff
   implicit def queueDiff[A]( implicit D: Diff[A] ): Diff[Queue[A]]   = LinearSeqDiff.queueDiff
@@ -117,6 +138,13 @@ object Diff extends TupleDiff with ProductDiff with MidPriorityDiffImplicits {
   implicit def hashMapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[HashMap[K, V]] = MapDiff.hashMapDiff
   implicit def listMapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[ListMap[K, V]] = MapDiff.listMapDiff
   implicit def treeMapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[TreeMap[K, V]] = MapDiff.treeMapDiff
+
+  // cats-data collections
+
+  implicit def chainDiff[A]( implicit D: Diff[A] ): Diff[Chain[A]]               = CatsDataDiff.chainDiff
+  implicit def nonEmptyChain[A]( implicit D: Diff[A] ): Diff[NonEmptyChain[A]]   = CatsDataDiff.nonEmptyChainDiff
+  implicit def nonEmptyList[A]( implicit D: Diff[A] ): Diff[NonEmptyList[A]]     = CatsDataDiff.nonEmptyListDiff
+  implicit def nonEmptyVector[A]( implicit D: Diff[A] ): Diff[NonEmptyVector[A]] = CatsDataDiff.nonEmptyVectorDiff
 
 }
 
