@@ -7,8 +7,9 @@ import scala.collection.immutable._
 
 object MapDiff {
 
-  def mapLikeDiff[K, V, CC <: MapLike[K, V, CC] with Map[K, V]]( name: String )( implicit DK: Diff[K],
-                                                                                DV: Diff[V] ): Diff[CC] = {
+  def mapLikeDiff[K, V, CC <: MapLike[K, V, CC] with Map[K, V]](
+      name: String
+  )( implicit DK: Diff[K], DV: Diff[V] ): Diff[CC] = {
 
     new Diff[CC] {
 

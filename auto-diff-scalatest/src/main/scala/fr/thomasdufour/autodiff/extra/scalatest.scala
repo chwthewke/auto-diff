@@ -17,8 +17,9 @@ object scalatest {
 
       override def apply( actual: A ): MatchResult =
         D( actual, expected )
-          .fold( MatchResult( matches = true, "", "" ) )( d =>
-            MatchResult( matches = false, message( actual, d ), "" ) )
+          .fold( MatchResult( matches = true, "", "" ) )(
+            d => MatchResult( matches = false, message( actual, d ), "" )
+          )
 
       override def toString(): String =
         s"autodiff-equivalent to ${D.show( expected )}"

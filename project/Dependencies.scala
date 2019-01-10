@@ -12,16 +12,15 @@ object Dependencies {
   def group( artifacts: ModuleID* )( testArtifacts: ModuleID* ): D =
     artifacts ++ (testArtifacts map (_ % "test"))
 
-  val kindProjector: D = Seq( compilerPlugin( "org.spire-math" %% "kind-projector" % "0.9.4" ) )
+  val kindProjector: D = Seq( compilerPlugin( "org.spire-math" %% "kind-projector" % "0.9.9" ) )
 
-  val splain: D = Seq( compilerPlugin( "io.tryp" % "splain" % "0.2.7" cross CrossVersion.patch ) )
+  val splain: D = Seq( compilerPlugin( "io.tryp" % "splain" % "0.3.5" cross CrossVersion.patch ) )
 
-  val catsVersion = "1.1.0"
+  val catsVersion = "1.5.0"
 
-  val cats: D = group( "org.typelevel", catsVersion )( "cats-core" )() ++
-    (group( "org.typelevel" %% "mouse" % "0.17" )() map (_.exclude( "org.typelevel", "cats_2.12" ) ))
+  val cats: D = Seq( "org.typelevel" %% "cats-core" % catsVersion )
 
-  val shapeless: D = group( "com.chuusai" %% "shapeless" % "2.3.3" )()
+  val shapeless: D = Seq( "com.chuusai" %% "shapeless" % "2.3.3" )
 
   val scalatestM: ModuleID = "org.scalatest" %% "scalatest" % "3.0.5"
 

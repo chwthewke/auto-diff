@@ -66,7 +66,8 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
         "report no difference" in {
 
           diff.apply( Vector( 1 -> "a", 3 -> "c", 7 -> "g" ), Vector( 3 -> "c", 7 -> "g", 1 -> "a" ) ).tree should ===(
-            Z )
+            Z
+          )
 
         }
       }
@@ -83,9 +84,11 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
         "report those in pairs" in {
 
           diff.apply( Vector( 1 -> "a", 2 -> "b" ), Vector( 1 -> "b", 2 -> "c" ) ).tree should ===(
-            U( None,
+            U(
+              None,
               T( T.Gen, "at 1", I( T.Tuple, "Tuple2", ( 2, V( "a", "b" ) ) ) ) ::
-                T( T.Gen, "at 2", I( T.Tuple, "Tuple2", ( 2, V( "b", "c" ) ) ) ) :: Nil )
+                T( T.Gen, "at 2", I( T.Tuple, "Tuple2", ( 2, V( "b", "c" ) ) ) ) :: Nil
+            )
           )
 
         }

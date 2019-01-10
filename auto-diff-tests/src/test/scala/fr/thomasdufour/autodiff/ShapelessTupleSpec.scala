@@ -85,12 +85,14 @@ class ShapelessTupleSpec
   }
 
   class DiffTupleProp[T <: Product] {
-    def check[R <: HList, N <: Nat]( name: String )( implicit genDiff: GenDiff[T],
-                                                    isTuple: IsTuple[T],
-                                                    gen: Generic.Aux[T, R],
-                                                    s: Length.Aux[R, N],
-                                                    n: ToInt[N],
-                                                    diff: Diff[T] ): Unit = {
+    def check[R <: HList, N <: Nat]( name: String )(
+        implicit genDiff: GenDiff[T],
+        isTuple: IsTuple[T],
+        gen: Generic.Aux[T, R],
+        s: Length.Aux[R, N],
+        n: ToInt[N],
+        diff: Diff[T]
+    ): Unit = {
       val _ = ( gen, s, isTuple )
 
       "validate the diff property" in {
@@ -200,32 +202,32 @@ class ShapelessTupleSpec
 
   "A Tuple18 diff" should {
     behave like diffTupleProp[
-      ( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )]
-      .check( "Tuple18" )
+      ( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )
+    ].check( "Tuple18" )
   }
 
   "A Tuple19 diff" should {
     behave like diffTupleProp[
-      ( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )]
-      .check( "Tuple19" )
+      ( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )
+    ].check( "Tuple19" )
   }
 
   "A Tuple20 diff" should {
     behave like diffTupleProp[
-      ( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )]
-      .check( "Tuple20" )
+      ( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )
+    ].check( "Tuple20" )
   }
 
   "A Tuple21 diff" should {
     behave like diffTupleProp[
-      ( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )]
-      .check( "Tuple21" )
+      ( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )
+    ].check( "Tuple21" )
   }
 
   "A Tuple22 diff" should {
     behave like diffTupleProp[
-      ( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )]
-      .check( "Tuple22" )
+      ( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )
+    ].check( "Tuple22" )
   }
 
 }

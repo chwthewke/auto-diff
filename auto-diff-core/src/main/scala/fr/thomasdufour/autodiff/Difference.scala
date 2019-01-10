@@ -70,9 +70,8 @@ object Difference {
           ( "{", ind ) :: contents ::: NonEmptyList.of( ( "}", ind ) )
       case Map( n, ds ) =>
         ( s"in $n", ind ) ::
-          ds
-          .bimap( prettyIndented( ind + 1, _ ), _.reduceMap( prettyKeyed( ind + 1, _ ) ) )
-          .fold( identity, identity, _ ::: _ )
+          ds.bimap( prettyIndented( ind + 1, _ ), _.reduceMap( prettyKeyed( ind + 1, _ ) ) )
+            .fold( identity, identity, _ ::: _ )
     }
 
     private def prettyField( ind: Int, f: Field ): NonEmptyList[( String, Int )] =

@@ -16,7 +16,8 @@ private[autodiff] object LinearSeqDiff {
 
   @tailrec
   def diffIx[A, CC <: LinearSeqLike[A, CC]]( acc: List[Difference.Index], ix: Int, left: CC, right: CC )(
-      implicit D: Diff[A] ): List[Difference.Index] = {
+      implicit D: Diff[A]
+  ): List[Difference.Index] = {
     ( headTail[A, CC]( left ), headTail[A, CC]( right ) ) match {
       case ( None, None ) => acc.reverse
       case ( Some( ( lh, lt ) ), Some( ( rh, rt ) ) ) =>

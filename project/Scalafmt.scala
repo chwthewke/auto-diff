@@ -1,15 +1,17 @@
 import sbt._
-import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
+import org.scalafmt.sbt.ScalafmtPlugin
+import org.scalafmt.sbt.ScalafmtPlugin.autoImport._
 
-object Scalafmt {
+object Scalafmt extends AutoPlugin {
+  override def requires: Plugins = super.requires && ScalafmtPlugin
 
   val scalafmtGenerateConfig: TaskKey[Unit] =
-    TaskKey[Unit]("scalafmtGenerateConfig")
+    TaskKey[Unit]( "scalafmtGenerateConfig" )
 
-  val settings = Seq(
+  override def buildSettings = Seq(
     scalafmtGenerateConfig := {
       IO.write(
-        file(".scalafmt.conf"),
+        file( ".scalafmt.conf" ),
         """style = defaultWithAlign
           |maxColumn = 120
           |lineEndings = preserve
@@ -23,10 +25,9 @@ object Scalafmt {
       )
     },
     scalafmtOnCompile := true,
-    scalafmtVersion := "1.1.0",
     scalafmtConfig := {
       val _ = scalafmtGenerateConfig.value
-      file(".scalafmt.conf")
+      Some( file( ".scalafmt.conf" ) )
     }
   )
 }

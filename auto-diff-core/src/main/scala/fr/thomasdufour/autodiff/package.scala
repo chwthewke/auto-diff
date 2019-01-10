@@ -1,7 +1,6 @@
 package fr.thomasdufour
 
 import cats.syntax.either._
-import mouse.all.anySyntaxMouse
 
 package object autodiff {
   import scala.collection.{immutable => sci}
@@ -24,9 +23,8 @@ package object autodiff {
       .recoverWith {
         case _ =>
           Either.catchNonFatal(
-            klass.getName.stripSuffix( "$" )
-              |> dropUntilLast( "." )
-              |> dropUntilLast( "$" ) )
+            dropUntilLast( "$" )( dropUntilLast( "." )( klass.getName.stripSuffix( "$" ) ) )
+          )
       }
       .getOrElse( "<unknown>" )
 

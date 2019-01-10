@@ -29,7 +29,8 @@ object CoproductDiff extends LowPriorityCoproductDiffImplicits {
   implicit def implicitDiffForCCons[K <: Symbol, V, T <: Coproduct](
       implicit K: Witness.Aux[K],
       V: Lazy[Diff[V]],
-      T: CoproductDiff[T] ): CoproductDiff[FieldType[K, V] :+: T] =
+      T: CoproductDiff[T]
+  ): CoproductDiff[FieldType[K, V] :+: T] =
     cconsDiff( K, V, T )
 
 }
@@ -39,12 +40,15 @@ trait LowPriorityCoproductDiffImplicits {
   implicit def implicitDerivedDiffForCCons[K <: Symbol, V, T <: Coproduct](
       implicit K: Witness.Aux[K],
       V: Lazy[DerivedDiff[V]],
-      T: CoproductDiff[T] ): CoproductDiff[FieldType[K, V] :+: T] =
+      T: CoproductDiff[T]
+  ): CoproductDiff[FieldType[K, V] :+: T] =
     cconsDiff( K, V, T )
 
-  def cconsDiff[K <: Symbol, V, T <: Coproduct]( K: Witness.Aux[K],
-                                                V: Lazy[Diff[V]],
-                                                T: CoproductDiff[T] ): CoproductDiff[FieldType[K, V] :+: T] =
+  def cconsDiff[K <: Symbol, V, T <: Coproduct](
+      K: Witness.Aux[K],
+      V: Lazy[Diff[V]],
+      T: CoproductDiff[T]
+  ): CoproductDiff[FieldType[K, V] :+: T] =
     new CoproductDiff[:+:[FieldType[K, V], T]] {
       override def apply( left: :+:[FieldType[K, V], T], right: :+:[FieldType[K, V], T] ): Option[Difference] =
         ( left, right ) match {

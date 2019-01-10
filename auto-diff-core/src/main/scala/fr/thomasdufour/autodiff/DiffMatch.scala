@@ -29,17 +29,19 @@ object DiffMatch {
     DiffMatch( difference, matches )
   }
 
-  private def classify[A]( left: Iterable[A], right: Iterable[A] )(
-      implicit D: Diff[A],
-      H: Hint[A] ): ( List[A], List[A], List[( A, A )], List[Difference] ) = {
+  private def classify[A](
+      left: Iterable[A],
+      right: Iterable[A]
+  )( implicit D: Diff[A], H: Hint[A] ): ( List[A], List[A], List[( A, A )], List[Difference] ) = {
     right.foldRight( ( left.toList, List.empty[A], List.empty[( A, A )], List.empty[Difference] ) ) {
       case ( elem, ( remaining, unmatched, matches, mismatches ) ) =>
         def remainingAfter( matched: A ) = remaining.filterNot( matched == _ )
 
         def explainMismatch( a: A, d: Difference ): Difference = Difference.Tagged( s"at ${H.show( a )}", d )
 
-        def search( prevMis: Option[( A, Difference )],
-                   excessMis: Boolean )( cands: List[A] ): Either[Option[( A, Difference )], A] = cands match {
+        def search( prevMis: Option[( A, Difference )], excessMis: Boolean )(
+            cands: List[A]
+        ): Either[Option[( A, Difference )], A] = cands match {
           case Nil => Left( prevMis.map { case ( a, d ) => ( a, explainMismatch( a, d ) ) } )
           case cand :: more if H( cand, elem ) =>
             D( cand, elem ) match {

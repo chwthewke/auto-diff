@@ -6,7 +6,7 @@ import ReleaseTransformations._
 
 // format: off
 scalaOrganization in ThisBuild := "org.scala-lang"
-scalaVersion      in ThisBuild := "2.12.4"
+scalaVersion      in ThisBuild := "2.12.8"
 conflictManager   in ThisBuild := ConflictManager.strict
 // format: on
 
@@ -18,8 +18,9 @@ val sharedSettings = Seq(
     else
       Opts.resolver.sonatypeStaging
   )
-) ++
-  Scalafmt.settings
+)
+
+enablePlugins( Scalafmt )
 
 val autodiffSettings =
   Defaults.coreDefaultSettings ++

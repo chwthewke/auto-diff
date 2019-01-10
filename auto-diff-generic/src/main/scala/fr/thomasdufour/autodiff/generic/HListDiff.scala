@@ -25,9 +25,11 @@ object HListDiff extends LowPriorityHListDiffImplicits {
       override def show( value: HNil ): List[String] = Nil
     }
 
-  implicit def implicitDiffForHCons[K <: Symbol, V, T <: HList]( implicit K: Witness.Aux[K],
-                                                                V: Lazy[Diff[V]],
-                                                                T: HListDiff[T] ): HListDiff[FieldType[K, V] :: T] =
+  implicit def implicitDiffForHCons[K <: Symbol, V, T <: HList](
+      implicit K: Witness.Aux[K],
+      V: Lazy[Diff[V]],
+      T: HListDiff[T]
+  ): HListDiff[FieldType[K, V] :: T] =
     hconsDiff( K, V, T )
 
 }
@@ -36,12 +38,15 @@ trait LowPriorityHListDiffImplicits {
   implicit def implicitDerivedDiffForHCons[K <: Symbol, V, T <: HList](
       implicit K: Witness.Aux[K],
       V: Lazy[DerivedDiff[V]],
-      T: HListDiff[T] ): HListDiff[FieldType[K, V] :: T] =
+      T: HListDiff[T]
+  ): HListDiff[FieldType[K, V] :: T] =
     hconsDiff( K, V, T )
 
-  def hconsDiff[K <: Symbol, V, T <: HList]( K: Witness.Aux[K],
-                                            V: Lazy[Diff[V]],
-                                            T: HListDiff[T] ): HListDiff[FieldType[K, V] :: T] =
+  def hconsDiff[K <: Symbol, V, T <: HList](
+      K: Witness.Aux[K],
+      V: Lazy[Diff[V]],
+      T: HListDiff[T]
+  ): HListDiff[FieldType[K, V] :: T] =
     new HListDiff[FieldType[K, V] :: T] {
       override def apply( left: FieldType[K, V] :: T, right: FieldType[K, V] :: T ): List[Difference.Field] = {
         V.value( left.head, right.head ).map( Difference.Field( K.value.name, _ ) ).toList ++ T( left.tail, right.tail )

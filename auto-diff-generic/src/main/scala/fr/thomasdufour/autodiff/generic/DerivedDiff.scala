@@ -18,9 +18,11 @@ abstract class DerivedDiff[A] extends Diff[A] { self =>
 }
 
 object DerivedDiff {
-  implicit def genericProductDiff[A, L <: HList]( implicit G: LabelledGeneric.Aux[A, L],
-                                                 D: HListDiff[L],
-                                                 C: ClassTag[A] ): DerivedDiff[A] =
+  implicit def genericProductDiff[A, L <: HList](
+      implicit G: LabelledGeneric.Aux[A, L],
+      D: HListDiff[L],
+      C: ClassTag[A]
+  ): DerivedDiff[A] =
     new DerivedDiff[A] {
       override def apply( left: A, right: A ): Option[Difference] =
         NonEmptyList
@@ -31,9 +33,11 @@ object DerivedDiff {
         D.show( G.to( value ) ).mkString( s"${getClassSimpleName( C.runtimeClass )}(", ", ", ")" )
     }
 
-  implicit def genericCoproductDiff[A, C <: Coproduct]( implicit G: LabelledGeneric.Aux[A, C],
-                                                       D: CoproductDiff[C],
-                                                       C: ClassTag[A] ): DerivedDiff[A] =
+  implicit def genericCoproductDiff[A, C <: Coproduct](
+      implicit G: LabelledGeneric.Aux[A, C],
+      D: CoproductDiff[C],
+      C: ClassTag[A]
+  ): DerivedDiff[A] =
     new DerivedDiff[A] {
       override def apply( left: A, right: A ): Option[Difference] =
         D( G.to( left ), G.to( right ) ).map( Difference.Coproduct( getClassSimpleName( C.runtimeClass ), _ ) )
