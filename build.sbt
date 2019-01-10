@@ -33,7 +33,7 @@ def withOverwrite( enable: Boolean )( config: PublishConfiguration ): PublishCon
   config.withOverwrite( enable )
 
 val publishSettings = Seq(
-  useGpg := true,
+  //useGpg := true,
   autoAPIMappings := true,
   publishMavenStyle := true,
   publishArtifact in Test := false,
