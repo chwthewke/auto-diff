@@ -6,9 +6,9 @@ import org.scalacheck.Gen
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.Matchers
 import org.scalatest.WordSpec
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
-class PrimitivesSpec extends WordSpec with Matchers with TypeCheckedTripleEquals with GeneratorDrivenPropertyChecks {
+class PrimitivesSpec extends WordSpec with Matchers with TypeCheckedTripleEquals with ScalaCheckDrivenPropertyChecks {
 
   import DiffOps._
 

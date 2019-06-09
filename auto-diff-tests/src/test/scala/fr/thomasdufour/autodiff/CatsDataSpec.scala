@@ -3,8 +3,8 @@ package fr.thomasdufour.autodiff
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.Matchers
 import org.scalatest.WordSpec
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
-class CatsDataSpec extends WordSpec with Matchers with TypeCheckedTripleEquals with GeneratorDrivenPropertyChecks {
+class CatsDataSpec extends WordSpec with Matchers with TypeCheckedTripleEquals with ScalaCheckDrivenPropertyChecks {
   // TODO :D
 }

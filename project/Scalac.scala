@@ -31,7 +31,8 @@ object Scalac {
 
   def forConsole( opts: Seq[String] ): Seq[String] =
     opts
-      .filterNot( Set( "-Ywarn-unused-import", "-Xfatal-warnings" ) )
+      .filterNot( _ == "-Xfatal-warnings" )
+      .filterNot( _.startsWith( "-Ywarn-unused" ) )
       .filterNot( _.startsWith( "-Xlint" ) )
 
   val settings: Seq[Def.Setting[_]] =

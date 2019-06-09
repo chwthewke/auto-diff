@@ -20,7 +20,7 @@ object Console {
   }
 
   val coreImports = Imports(
-    "net.chwthewke.autodiff._" :: "cats._" :: "cats.data._" :: "cats.implicits._" :: Nil,
+    "fr.thomasdufour.autodiff._" :: "cats._" :: "cats.data._" :: "cats.implicits._" :: Nil,
     "org.scalacheck.Gen" :: "org.scalacheck.Gen._" :: Nil
   )
 }

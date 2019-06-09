@@ -4,9 +4,9 @@ import cats.data.NonEmptyList
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalactic.TypeCheckedTripleEquals
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.Matchers
 import org.scalatest.WordSpec
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import shapeless.::
 import shapeless.Generic
 import shapeless.HList
@@ -15,7 +15,6 @@ import shapeless.IsTuple
 import shapeless.Nat
 import shapeless.ops.hlist.Length
 import shapeless.ops.nat.ToInt
-
 import scala.collection.immutable.TreeSet
 
 object ShapelessTupleSpec {
@@ -67,7 +66,7 @@ class ShapelessTupleSpec
     extends WordSpec
     with Matchers
     with TypeCheckedTripleEquals
-    with GeneratorDrivenPropertyChecks {
+    with ScalaCheckDrivenPropertyChecks {
   import DiffOps._
   import ShapelessTupleSpec._
 

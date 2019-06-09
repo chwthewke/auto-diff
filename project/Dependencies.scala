@@ -5,44 +5,31 @@ import sbt.Keys._
 object Dependencies {
   type D = Seq[ModuleID]
 
-  def group( organization: String, version: String )( artifacts: String* )( testArtifacts: String* ): D =
-    artifacts.map( organization       %% _ % version ) ++
-      testArtifacts.map( organization %% _ % version % "test" )
+  val kindProjector: D = Seq( compilerPlugin( "org.spire-math" %% "kind-projector" % "0.9.10" ) )
 
-  def group( artifacts: ModuleID* )( testArtifacts: ModuleID* ): D =
-    artifacts ++ (testArtifacts map (_ % "test"))
+  val splain: D = Seq( compilerPlugin( "io.tryp" % "splain" % "0.4.1" cross CrossVersion.patch ) )
 
-  val kindProjector: D = Seq( compilerPlugin( "org.spire-math" %% "kind-projector" % "0.9.9" ) )
-
-  val splain: D = Seq( compilerPlugin( "io.tryp" % "splain" % "0.3.5" cross CrossVersion.patch ) )
-
-  val catsVersion = "1.5.0"
+  val catsVersion = "1.6.1"
 
   val cats: D = Seq( "org.typelevel" %% "cats-core" % catsVersion )
 
   val shapeless: D = Seq( "com.chuusai" %% "shapeless" % "2.3.3" )
 
-  val scalatestM: ModuleID = "org.scalatest" %% "scalatest" % "3.0.5"
+  val scalacheck: D = Seq( "org.scalacheck" %% "scalacheck" % "1.13.5" % Test,
+                          "io.github.amrhassan" %% "scalacheck-cats" % "0.4.0" % Test )
 
-  val scalacheckM: ModuleID = "org.scalacheck" %% "scalacheck" % "1.13.4"
+  val scalatest: D = Seq( "org.scalatest" %% "scalatest" % "3.0.7" )
 
-  val scalacheck: D =
-    group()( scalacheckM, "io.github.amrhassan" %% "scalacheck-cats" % "0.4.0" )
+  val scalatestForTests: D = scalatest.map( _ % Test )
 
-  val scalatest: D = group( scalatestM )()
-
-  val scalatestForTests: D = group()( scalatestM )
-
-  val enumeratumVersion: String = "1.5.13"
-  val enumeratum: D             = group( "com.beachape" %% "enumeratum" % enumeratumVersion )()
+  val enumeratum: D = Seq( "com.beachape" %% "enumeratum" % "1.5.13" )
 
   val overrides: Def.Setting[D] = dependencyOverrides ++= Seq(
     "org.scala-lang" % "scala-library"  % scalaVersion.value,
     "org.scala-lang" % "scala-compiler" % scalaVersion.value,
     "org.scala-lang" % "scala-reflect"  % scalaVersion.value,
     "org.typelevel"  %% "cats-core"     % catsVersion,
-    scalacheckM
-  )
+  ) ++ scalacheck
 
   val common: D = kindProjector ++ cats
 
