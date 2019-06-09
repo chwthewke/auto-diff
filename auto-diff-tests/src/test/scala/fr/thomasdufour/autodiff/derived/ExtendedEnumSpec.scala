@@ -1,6 +1,5 @@
-package fr.thomasdufour
-package autodiff
-package generic
+package fr.thomasdufour.autodiff
+package derived
 
 import enumeratum.Enum
 import enumeratum.EnumEntry
@@ -12,10 +11,13 @@ import extra.enumeratum._
 class ExtendedEnumSpec extends WordSpec with Matchers with TypeCheckedTripleEquals {
   import DiffOps._
   import ExtendedEnumSpec._
-  import semiauto._
+  import semi._
 
   "Diffing values in a nested Coproduct/Product/Enum" when {
-    val D = deriveDiff[ExtendedEnum[Color]]
+    val D = {
+      import auto._
+      diff[ExtendedEnum[Color]]
+    }
 
     import Color.Red
 

@@ -110,8 +110,8 @@ object Diff extends TupleDiff with ProductDiff with MidPriorityDiffImplicits {
       value.fold( a => s"Left(${DA.show( a )})", b => s"Right(${DB.show( b )})" )
 
     override def apply( left: Either[A, B], right: Either[A, B] ): Option[Difference] = ( left, right ) match {
-      case ( Left( l ), Left( r ) )   => DA.apply( l, r ).map( Difference.Coproduct( "Either", _ ) )
-      case ( Right( l ), Right( r ) ) => DB.apply( l, r ).map( Difference.Coproduct( "Either", _ ) )
+      case ( Left( l ), Left( r ) )   => DA.apply( l, r ).map( Difference.Coproduct( "Left", _ ) )
+      case ( Right( l ), Right( r ) ) => DB.apply( l, r ).map( Difference.Coproduct( "Right", _ ) )
       case ( _, _ )                   => Difference.Coproduct( "Either", Difference.Value( show( left ), show( right ) ) ).some
     }
   }

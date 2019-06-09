@@ -5,12 +5,11 @@ import cats.data.NonEmptyList
 /**
   * Untyped difference trees used as a testable representation of Difference.
   */
+// TODO It made sense once, but now, it might be better/simpler to replace with extractors, wouldn't it?
 sealed trait DifferenceTree
 
 case object Z                                                             extends DifferenceTree
 final case class V( left: String, right: String )                         extends DifferenceTree
-final case class L( left: String, right: String )                         extends DifferenceTree
-final case class R( left: String, right: String )                         extends DifferenceTree
 final case class U( d: Option[DifferenceTree], ms: List[DifferenceTree] ) extends DifferenceTree
 final case class T( kind: T.K, name: String, d: DifferenceTree )          extends DifferenceTree
 final case class I( kind: T.I, name: String, ds: NonEmptyList[T.Index] )  extends DifferenceTree
