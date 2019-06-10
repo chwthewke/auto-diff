@@ -141,14 +141,15 @@ object Diff extends TupleDiff with ProductDiff with MidPriorityDiffImplicits {
 
   // cats-data collections
 
-  implicit def chainDiff[A]( implicit D: Diff[A] ): Diff[Chain[A]]               = CatsDataDiff.chainDiff
-  implicit def nonEmptyChain[A]( implicit D: Diff[A] ): Diff[NonEmptyChain[A]]   = CatsDataDiff.nonEmptyChainDiff
-  implicit def nonEmptyList[A]( implicit D: Diff[A] ): Diff[NonEmptyList[A]]     = CatsDataDiff.nonEmptyListDiff
-  implicit def nonEmptyVector[A]( implicit D: Diff[A] ): Diff[NonEmptyVector[A]] = CatsDataDiff.nonEmptyVectorDiff
+  implicit def chainDiff[A]( implicit D: Diff[A] ): Diff[Chain[A]]        = CatsDataDiff.chainDiff
+  implicit def necDiff[A]( implicit D: Diff[A] ): Diff[NonEmptyChain[A]]  = CatsDataDiff.nonEmptyChainDiff
+  implicit def nelDiff[A]( implicit D: Diff[A] ): Diff[NonEmptyList[A]]   = CatsDataDiff.nonEmptyListDiff
+  implicit def nevDiff[A]( implicit D: Diff[A] ): Diff[NonEmptyVector[A]] = CatsDataDiff.nonEmptyVectorDiff
 
 }
 
 trait MidPriorityDiffImplicits extends LowPriorityDiffImplicits {
+  // TODO could this be pushed down? after all, mapDiff/hashMapDiff at the same level seems to work...
   implicit def iterableDiff[A]( implicit D: Diff[A] ): Diff[Iterable[A]] =
     Diff[List[A]]
       .contramap[Iterable[A]]( _.toList )
