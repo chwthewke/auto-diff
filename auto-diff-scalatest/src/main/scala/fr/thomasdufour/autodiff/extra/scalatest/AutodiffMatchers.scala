@@ -1,12 +1,11 @@
 package fr.thomasdufour.autodiff
 package extra
+package scalatest
 
 import org.scalatest.matchers.MatchResult
 import org.scalatest.matchers.Matcher
 
-object scalatest {
-  // TODO configure presence of expected, actual (via implicit?)
-
+trait AutodiffMatchers {
   def matchWithAutoDiff[A]( expected: A )( implicit D: Diff[A] ): Matcher[A] =
     new Matcher[A] {
       private def message( actual: A, difference: Difference ): String =
@@ -26,5 +25,6 @@ object scalatest {
     }
 
   def ~=[A]( expected: A )( implicit D: Diff[A] ): Matcher[A] = matchWithAutoDiff( expected )
-
 }
+
+object AutodiffMatchers extends AutodiffMatchers

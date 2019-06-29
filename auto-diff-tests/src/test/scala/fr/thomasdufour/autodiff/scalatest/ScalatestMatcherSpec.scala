@@ -5,11 +5,9 @@ import org.scalatest.Matchers
 import org.scalatest.WordSpec
 import org.scalatest.exceptions.TestFailedException
 import scala.language.implicitConversions
+import fr.thomasdufour.autodiff.extra.scalatest.AutodiffMatchers._
 
 class ScalatestMatcherSpec extends WordSpec with Matchers with Inside {
-
-  import fr.thomasdufour.autodiff.extra.scalatest.matchWithAutoDiff
-  import fr.thomasdufour.autodiff.extra.scalatest.~=
 
   "Testing a succeeding diff" when {
     "using the regular function" should {
