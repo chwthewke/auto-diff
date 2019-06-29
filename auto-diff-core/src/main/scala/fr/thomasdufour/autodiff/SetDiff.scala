@@ -7,10 +7,12 @@ import scala.collection.immutable.TreeSet
 
 object SetDiff {
 
-  def setLikeDiff[A, CC <: SetLike[A, CC] with Set[A]]( name: String )( implicit D: Diff[A] ): Diff[CC] =
-    Diff[InAnyOrder[A]]
+  def setLikeDiff[A, CC <: SetLike[A, CC] with Set[A]](
+      name: String
+  )( implicit D: Diff[A], H: DiffMatch.Hint[A] ): Diff[CC] =
+    InAnyOrder
+      .mkAnyOrderDiff( d => Difference.Set( name, d ) )
       .contramap[CC]( set => new InAnyOrder[A]( set ) )
-      .mapDifference( d => Difference.Set( name, d ) )
 
   def setDiff[A]( implicit D: Diff[A] ): Diff[Set[A]]         = setLikeDiff[A, Set[A]]( "Set" )
   def listSetDiff[A]( implicit D: Diff[A] ): Diff[ListSet[A]] = setLikeDiff[A, ListSet[A]]( "ListSet" )

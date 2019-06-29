@@ -7,7 +7,7 @@ import cats.data.Ior
 import cats.data.NonEmptyList
 import cats.syntax.option._
 
-case class DiffMatch[A]( difference: Option[Difference], matches: List[( A, A )] )
+case class DiffMatch[A]( difference: Option[Difference.Unordered], matches: List[( A, A )] )
 
 object DiffMatch {
 
@@ -24,7 +24,7 @@ object DiffMatch {
     val mismatchDifferences: Option[NonEmptyList[Difference]] =
       NonEmptyList.fromList( mismatches )
 
-    val difference = Ior.fromOptions( unmatchedDifference, mismatchDifferences ).map( Difference.Unordered( _ ) )
+    val difference = Ior.fromOptions( unmatchedDifference, mismatchDifferences ).map( Difference.Unordered )
 
     DiffMatch( difference, matches )
   }
@@ -35,7 +35,7 @@ object DiffMatch {
   )( implicit D: Diff[A], H: Hint[A] ): ( List[A], List[A], List[( A, A )], List[Difference] ) = {
     right.foldRight( ( left.toList, List.empty[A], List.empty[( A, A )], List.empty[Difference] ) ) {
       case ( elem, ( remaining, unmatched, matches, mismatches ) ) =>
-        def remainingAfter( matched: A ) = remaining.filterNot( matched == _ )
+        def remainingAfter( matched: A ): List[A] = remaining.filterNot( matched == _ )
 
         def explainMismatch( a: A, d: Difference ): Difference = Difference.Tagged( s"at ${H.show( a )}", d )
 
