@@ -82,6 +82,47 @@ class RecursiveParametricStdSpec extends WordSpec with Matchers with TypeChecked
       }
     }
 
+    "has recursion under a Tuple" should {
+      val diff: Diff[TupleRec] = {
+        import auto._
+        semi.diff
+      }
+
+      "use the provided Tuple Diff" in {
+
+        diff(
+          TupleRec2( TupleRec0, TupleRec2( TupleRec0 -> TupleRec0 ) ),
+          TupleRec2( TupleRec0, TupleRec2( TupleRec0, TupleRec2( TupleRec0, TupleRec0 ) ) ),
+        ).tree should ===(
+          T(
+            T.Coproduct,
+            "TupleRec",
+            F(
+              "TupleRec2",
+              "rec" -> I(
+                T.Tuple,
+                "Tuple2",
+                2 ->
+                  T(
+                    T.Coproduct,
+                    "TupleRec",
+                    F(
+                      "TupleRec2",
+                      "rec" -> I(
+                        T.Tuple,
+                        "Tuple2",
+                        2 ->
+                          T( T.Coproduct, "TupleRec", "TupleRec0(...)" !== "TupleRec2(...)" )
+                      )
+                    )
+                  )
+              )
+            )
+          )
+        )
+      }
+    }
+
   }
 
   // TODO: a bunch more
@@ -92,4 +133,11 @@ object RecursiveParametricStdSpec {
   case class OptionRec( rec: Option[OptionRec] )
   case class EitherRec( rec: Either[String, EitherRec] )
   case class ListRec( rec: List[ListRec] )
+
+  sealed trait TupleRec
+  final case object TupleRec0                               extends TupleRec
+  final case class TupleRec2( rec: ( TupleRec, TupleRec ) ) extends TupleRec
+  object TupleRec2 {
+    def apply( x: TupleRec, y: TupleRec ): TupleRec2 = TupleRec2( ( x, y ) )
+  }
 }

@@ -82,7 +82,6 @@ val noPublishSettings = Seq(
 val `auto-diff-core` = project
   .settings( autodiffSettings )
   .settings( SbtBuildInfo.buildSettings( "AutodiffBuildInfo" ) )
-  .settings( libraryDependencies ++= Dependencies.shapeless ) // legacy
   .settings( Console.coreImports.settings )
   .settings( sourceGenerators in Compile += (sourceManaged in Compile).map( Boilerplate.gen ).taskValue )
   .settings( publishSettings )

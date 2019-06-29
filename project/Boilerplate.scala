@@ -45,7 +45,7 @@ object Boilerplate {
     val funcName    = s"forProduct$n"
     val typeParams  = 1.to( n ).map( i => s"A$i" ).mkString( "[A, ", ", ", "]" )
     val fieldParams = 1.to( n ).map( i => s"field$i: String" ).mkString( "(", ", ", ")" )
-    val diffParams  = 1.to( n ).map( i => s"D$i: _root_.shapeless.Lazy[Diff[A$i]]" ).mkString( "(implicit ", ", ", ")" )
+    val diffParams  = 1.to( n ).map( i => s"D$i: Diff[A$i]" ).mkString( "(implicit ", ", ", ")" )
 
     val extractType =
       if (n == 1) "A => A1"
@@ -57,12 +57,12 @@ object Boilerplate {
 
     val diffParts =
       1.to( n )
-        .map( i => s"D$i.value(l$i,r$i).map(Difference.Field(field$i, _))" )
+        .map( i => s"D$i.apply(l$i,r$i).map(Difference.Field(field$i, _))" )
         .mkString( "List(", ", ", ").flatten" )
 
     val showParts =
       1.to( n )
-        .map( i => s"""s"$$field$i = $${D$i.value.show(v$i)}"""" )
+        .map( i => s"""s"$$field$i = $${D$i.show(v$i)}"""" )
         .mkString( "List(", ", ", """).mkString( s"$name(", ", ", ")")""" )
 
     val body =
