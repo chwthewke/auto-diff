@@ -21,19 +21,4 @@ object Difference {
   final case class Keyed( key: String, difference: Difference )
   final case class Index( index: Int, difference: Difference )
 
-  trait Renderer {
-    def show( d: Difference ): String
-
-    def showDiff[A: Diff]( left: A, right: A ): String =
-      Diff[A].apply( left, right ).fold( "" )( show )
-  }
-
-  object Renderer {
-    import text._
-    val Plain2: Renderer     = Pretty( indentWidth = 2, color = Colorize.Plain )
-    val Colorized2: Renderer = Pretty( indentWidth = 2, color = Colorize.RedGreen )
-    val Plain4: Renderer     = Pretty( indentWidth = 4, color = Colorize.Plain )
-    val Colorized4: Renderer = Pretty( indentWidth = 4, color = Colorize.RedGreen )
-  }
-
 }

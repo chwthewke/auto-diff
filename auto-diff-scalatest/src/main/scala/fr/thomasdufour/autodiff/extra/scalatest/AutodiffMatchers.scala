@@ -9,7 +9,7 @@ trait AutodiffMatchers {
   def matchWithAutoDiff[A]( expected: A )( implicit D: Diff[A] ): Matcher[A] =
     new Matcher[A] {
       private def message( actual: A, difference: Difference ): String =
-        s"""${Difference.Pretty.Plain2.show( difference )}
+        s"""${Pretty.plain2.show( difference )}
            |  expected: ${D.show( expected )}
            |  actual:   ${D.show( actual )}
          """.stripMargin
