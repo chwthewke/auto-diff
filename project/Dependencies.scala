@@ -15,10 +15,10 @@ object Dependencies {
 
   val shapeless: D = Seq( "com.chuusai" %% "shapeless" % "2.3.3" )
 
-  val scalacheck: D = Seq( "org.scalacheck" %% "scalacheck" % "1.13.5" % Test,
-                          "io.github.amrhassan" %% "scalacheck-cats" % "0.4.0" % Test )
+  val scalacheck: D =
+    Seq( "org.scalacheck" %% "scalacheck" % "1.14.0" % Test, "io.chrisdavenport" %% "cats-scalacheck" % "0.1.1" % Test )
 
-  val scalatest: D = Seq( "org.scalatest" %% "scalatest" % "3.0.7" )
+  val scalatest: D = Seq( "org.scalatest" %% "scalatest" % "3.0.8" )
 
   val scalatestForTests: D = scalatest.map( _ % Test )
 
