@@ -42,7 +42,7 @@ trait Diff[A] { self =>
     Diff.instance( self.apply, v => f( self.show( v ) ) )
 }
 
-object Diff extends TupleDiff with ProductDiff with MidPriorityDiffImplicits {
+object Diff extends TupleDiff with ProductDiff {
   def apply[A]( implicit ev: Diff[A] ): Diff[A] = ev
 
   def instance[A]( diff: ( A, A ) => Option[Difference], show0: A => String ): Diff[A] =
@@ -146,10 +146,6 @@ object Diff extends TupleDiff with ProductDiff with MidPriorityDiffImplicits {
   implicit def nelDiff[A]( implicit D: Diff[A] ): Diff[NonEmptyList[A]]   = CatsDataDiff.nonEmptyListDiff
   implicit def nevDiff[A]( implicit D: Diff[A] ): Diff[NonEmptyVector[A]] = CatsDataDiff.nonEmptyVectorDiff
 
-}
-
-trait MidPriorityDiffImplicits extends LowPriorityDiffImplicits {
-  // TODO could this be pushed down? after all, mapDiff/hashMapDiff at the same level seems to work...
   implicit def iterableDiff[A]( implicit D: Diff[A] ): Diff[Iterable[A]] =
     Diff[List[A]]
       .contramap[Iterable[A]]( _.toList )
@@ -157,8 +153,4 @@ trait MidPriorityDiffImplicits extends LowPriorityDiffImplicits {
         case Difference.Seq( _, diffs ) => Difference.Seq( "an iterable", diffs )
         case d                          => d
       }
-}
-
-trait LowPriorityDiffImplicits {
-  implicit def importDiff[A]( implicit exported: Exported[Diff[A]] ): Diff[A] = exported.instance
 }
