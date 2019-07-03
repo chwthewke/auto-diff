@@ -17,7 +17,7 @@ import shapeless.HNil
 import shapeless.IsTuple
 import shapeless.Nat
 
-trait ShapelessTuples { self: WordSpecLike with Matchers with ScalaCheckDrivenPropertyChecks =>
+trait ShapelessTuples extends ScalaCheckConfig { self: WordSpecLike with Matchers with ScalaCheckDrivenPropertyChecks =>
 
   import DiffOps._
   import org.scalacheck.Shrink.shrinkAny

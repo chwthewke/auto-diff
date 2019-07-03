@@ -8,7 +8,12 @@ import org.scalatest.Matchers
 import org.scalatest.WordSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
-class PrimitivesSpec extends WordSpec with Matchers with TypeCheckedTripleEquals with ScalaCheckDrivenPropertyChecks {
+class PrimitivesSpec
+    extends WordSpec
+    with Matchers
+    with TypeCheckedTripleEquals
+    with ScalaCheckDrivenPropertyChecks
+    with ScalaCheckConfig {
 
   import DiffOps._
 
