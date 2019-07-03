@@ -39,6 +39,6 @@ private[autodiff] object IndexedSeqDiff {
 
   def vectorDiff[A]( implicit D: Diff[A] ): Diff[Vector[A]] = indexedSeqDiff[A, Vector[A]]( "Vector" )
   def arrayDiff[A]( implicit D: Diff[A] ): Diff[Array[A]] =
-    indexedSeqDiff[A, mutable.WrappedArray[A]]( "Vector" )
+    indexedSeqDiff[A, mutable.WrappedArray[A]]( "Array" )
       .contramap[Array[A]]( a => a )
 }
