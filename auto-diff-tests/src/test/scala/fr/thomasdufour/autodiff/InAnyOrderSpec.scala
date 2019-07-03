@@ -53,6 +53,12 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
         }
       }
 
+      "one collection has an extra element" should {
+        "report the extra element" in {
+          diff.apply( Vector( 3, 2, 1 ), Vector( 1, 3 ) ).tree should ===( U( Some( V( "2", "" ) ), Nil ) )
+        }
+      }
+
     }
 
     "with a match hint" when {
@@ -107,4 +113,96 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
     }
   }
 
+  "diffing in any order inside a derived diff" when {
+    import InAnyOrderSpec._
+
+    def things( ints: Int* ): Things = Things( ints.toVector.map( Thing ) )
+
+    val diff = Diff[Things]
+
+    "the collections are equal" should {
+      "report no difference" in {
+
+        diff.apply( things( 1, 2, 3 ), things( 1, 2, 3 ) ).tree should ===( Z )
+
+      }
+    }
+
+    "the collections are equivalent" should {
+      "report no difference" in {
+
+        diff.apply( things( 1, 2, 3 ), things( 3, 1, 2 ) ).tree should ===( Z )
+
+      }
+    }
+
+    "the collections have mismatched elements" should {
+      "report the removed and added elements in order" in {
+
+        diff.apply( things( 1, 3, 7 ), things( 0, 3, 5 ) ).tree should ===(
+          F(
+            "Things",
+            "vec" ->
+              U( Some( V( "Thing(value: 1), Thing(value: 7)", "Thing(value: 0), Thing(value: 5)" ) ), Nil )
+          )
+        )
+
+      }
+    }
+
+    "the collections have a single mismatched element last of several" should {
+      "report the removed and added elements in order" in {
+
+        diff.apply( things( 1, 3, 7 ), things( 1, 3, 5 ) ).tree should ===(
+          F(
+            "Things",
+            "vec" ->
+              U( Some( V( "Thing(value: 7)", "Thing(value: 5)" ) ), Nil )
+          )
+        )
+
+      }
+    }
+
+    "the collections have a single mismatched element first of several" should {
+      "report the removed and added elements in order" in {
+
+        diff.apply( things( 0, 3, 5 ), things( 1, 3, 5 ) ).tree should ===(
+          F(
+            "Things",
+            "vec" ->
+              U( Some( V( "Thing(value: 0)", "Thing(value: 1)" ) ), Nil )
+          )
+        )
+
+      }
+    }
+
+    "one collection has an extra element" should {
+      "report the extra element" in {
+        diff.apply( things( 3, 2, 1 ), things( 1, 3 ) ).tree should ===(
+          F(
+            "Things",
+            "vec" ->
+              U( Some( V( "Thing(value: 2)", "" ) ), Nil )
+          )
+        )
+
+      }
+    }
+
+  }
+
+}
+
+object InAnyOrderSpec {
+  case class Thing( value: Int )
+  case class Things( vec: Vector[Thing] )
+
+  implicit val thingsDiff: Diff[Things] = {
+    import derived.auto._
+    implicit val thingsInAnyOrder: Diff[Vector[Thing]] = Diff.inAnyOrder
+
+    derived.semi.diff
+  }
 }
