@@ -116,7 +116,7 @@ object Diff extends TupleDiff with ProductDiff {
     }
   }
 
-  def inAnyOrder[A, CC[x]]( implicit D: Diff[A], H: DiffMatch.Hint[A], D1: InAnyOrder.Diffable[CC] ): Diff[CC[A]] =
+  def inAnyOrder[A, CC[_]]( implicit D: Diff[A], H: DiffMatch.Hint[A], D1: AsIterable[CC] ): Diff[CC[A]] =
     InAnyOrder.anyOrderDiff[A].contramap( cc => InAnyOrder.diffable( cc ) )
 
   implicit def listDiff[A]( implicit D: Diff[A] ): Diff[List[A]]     = LinearSeqDiff.listDiff
