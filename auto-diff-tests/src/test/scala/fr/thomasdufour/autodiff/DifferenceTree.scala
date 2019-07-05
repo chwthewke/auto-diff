@@ -30,6 +30,16 @@ object F {
   }
 }
 
+object M {
+  def toKeyed( kd: ( String, DifferenceTree ) ): T.Keyed = (T.Keyed( _, _ ) ).tupled( kd )
+
+  def apply( name: String, keys: T, ds: ( String, DifferenceTree )* ): M =
+    M( name, Some( keys ), ds.toList.map( toKeyed ) )
+
+  def apply( name: String, ds: ( String, DifferenceTree )* ): M =
+    M( name, None, ds.toList.map( toKeyed ) )
+}
+
 object T {
   sealed trait K
   case object Coproduct extends K

@@ -13,6 +13,10 @@ object AsIterable extends AsIterableLowPriority {
     override def asIterable[A]( coll: F[A] ): Iterable[A] = coll
   }
 
+  implicit def arrayAsIterable: AsIterable[Array] = new AsIterable[Array] {
+    override def asIterable[A]( coll: Array[A] ): Iterable[A] = coll.to[Iterable]
+  }
+
   private[autodiff] implicit class AsIterableOps[F[_], A]( val self: F[A] ) extends AnyVal {
     def asIterable( implicit F: AsIterable[F] ): Iterable[A] = F.asIterable( self )
     def size( implicit F: AsIterable[F] ): Int               = F.asIterable( self ).size
