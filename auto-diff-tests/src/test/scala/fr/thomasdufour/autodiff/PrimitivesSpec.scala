@@ -33,14 +33,8 @@ class PrimitivesSpec
       }
     }
 
-  def identical[A]( implicit g: Gen[A] ): Gen[( A, A )] = g.map( x => ( x, x ) )
-  def different[A: Nudge]( implicit g: Gen[A] ): Gen[( A, A )] = {
-    val N = Nudge[A]
-    for {
-      a <- g
-      b <- N.nudge( g, a )
-    } yield ( a, b )
-  }
+  def identical[A]( implicit g: Gen[A] ): Gen[( A, A )]        = g.map( x => ( x, x ) )
+  def different[A: Nudge]( implicit g: Gen[A] ): Gen[( A, A )] = Nudge.different( g )
 
   def diffingArbitrary[A: Nudge: Arbitrary]( d: Diff[A] ): Unit = {
     implicit val gen = implicitly[Arbitrary[A]].arbitrary

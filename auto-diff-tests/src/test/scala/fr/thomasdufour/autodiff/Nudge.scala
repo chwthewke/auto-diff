@@ -41,6 +41,14 @@ object Nudge extends LowPriorityNudgeImplicits {
         }
     }
 
+  def different[A: Nudge]( g: Gen[A] ): Gen[( A, A )] = {
+    val N = Nudge[A]
+    for {
+      a <- g
+      b <- N.nudge( g, a )
+    } yield ( a, b )
+  }
+
 }
 
 trait LowPriorityNudgeImplicits {
