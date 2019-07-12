@@ -27,9 +27,11 @@ object MkDiff extends MkDiffDerivation {
 private[derived] abstract class MkDiffDerivation {
   implicit val mkDiffCnil: MkDiff[CNil] =
     new MkDiff[CNil] {
+      // $COVERAGE-OFF$
       override def apply( left: CNil, right: CNil ): Option[Difference] = none
 
       override def show( value: CNil ): String = value.impossible
+      // $COVERAGE-ON$
     }
 
   implicit def mkDiffCcons[K <: Symbol, V, T <: Coproduct](
