@@ -49,6 +49,10 @@ object Nudge extends LowPriorityNudgeImplicits {
     } yield ( a, b )
   }
 
+  implicit class NudgeGenOps[A]( val self: Gen[A] ) extends AnyVal {
+    def except( a: A )( implicit N: Nudge[A] ): Gen[A] = N.nudge( self, a )
+  }
+
 }
 
 trait LowPriorityNudgeImplicits {
