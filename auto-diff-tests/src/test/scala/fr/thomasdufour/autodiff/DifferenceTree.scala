@@ -44,7 +44,7 @@ object T {
   sealed trait K
   case object Coproduct extends K
   case object Set       extends K
-  case object Gen       extends K
+  case object Tag       extends K
 
   sealed trait I
   case object Tuple extends I
@@ -60,7 +60,7 @@ object DifferenceTree {
 
   def fromDifference( d: Difference ): DifferenceTree = d match {
     case Value( l, r )     => V( l, r )
-    case Tagged( t, d )    => T( T.Gen, t, fromDifference( d ) )
+    case Tagged( t, d )    => T( T.Tag, t, fromDifference( d ) )
     case Coproduct( n, d ) => T( T.Coproduct, n, fromDifference( d ) )
     case Product( n, fs )  => F( n, fs.map( f => T.Field( f.name, fromDifference( f.difference ) ) ) )
     case Tuple( n, fs )    => I( T.Tuple, n, fs.map( f => T.Index( f.index, fromDifference( f.difference ) ) ) )

@@ -92,8 +92,8 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
           diff.apply( Vector( 1 -> "a", 2 -> "b" ), Vector( 1 -> "b", 2 -> "c" ) ).tree should ===(
             U(
               None,
-              T( T.Gen, "at 1", I( T.Tuple, "Tuple2", ( 2, V( "a", "b" ) ) ) ) ::
-                T( T.Gen, "at 2", I( T.Tuple, "Tuple2", ( 2, V( "b", "c" ) ) ) ) :: Nil
+              T( T.Tag, "at 1", I( T.Tuple, "Tuple2", ( 2, V( "a", "b" ) ) ) ) ::
+                T( T.Tag, "at 2", I( T.Tuple, "Tuple2", ( 2, V( "b", "c" ) ) ) ) :: Nil
             )
           )
 
