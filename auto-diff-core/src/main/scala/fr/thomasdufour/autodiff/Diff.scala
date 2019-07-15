@@ -147,10 +147,6 @@ object Diff extends TupleDiff with ProductDiff {
   implicit def nevDiff[A]( implicit D: Diff[A] ): Diff[NonEmptyVector[A]] = CatsDataDiff.nonEmptyVectorDiff
 
   implicit def iterableDiff[A]( implicit D: Diff[A] ): Diff[Iterable[A]] =
-    Diff[List[A]]
-      .contramap[Iterable[A]]( _.toList )
-      .mapDifference {
-        case Difference.Seq( _, diffs ) => Difference.Seq( "an iterable", diffs )
-        case d                          => d
-      }
+    LinearSeqDiff.diffLinearSeq[A, List[A]]( "an iterable" ).contramap[Iterable[A]]( _.toList )
+
 }
