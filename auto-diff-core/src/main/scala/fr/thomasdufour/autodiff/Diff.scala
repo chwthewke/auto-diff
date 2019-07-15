@@ -34,12 +34,6 @@ trait Diff[A] { self =>
 
   def contramap[B]( f: B => A ): Diff[B] =
     Diff.instance( ( l, r ) => self.apply( f( l ), f( r ) ), v => self.show( f( v ) ) )
-
-  def mapDifference( f: Difference => Difference ): Diff[A] =
-    Diff.instance( ( l, r ) => self.apply( l, r ).map( f ), self.show )
-
-  def mapString( f: String => String ): Diff[A] =
-    Diff.instance( self.apply, v => f( self.show( v ) ) )
 }
 
 object Diff extends TupleDiff with ProductDiff {
