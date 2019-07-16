@@ -1,7 +1,8 @@
 package fr.thomasdufour.autodiff
 
-import cats.Show
 import cats.Contravariant
+import cats.Eval
+import cats.Show
 import cats.data.Chain
 import cats.data.NonEmptyChain
 import cats.data.NonEmptyList
@@ -88,6 +89,8 @@ object Diff extends TupleDiff with ProductDiff {
   implicit val offsetTimeDiff: Diff[OffsetTime]         = defaultEqShow
   implicit val offsetDateTimeDiff: Diff[OffsetDateTime] = defaultEqShow
   implicit val zonedDateTimeDiff: Diff[ZonedDateTime]   = defaultEqShow
+
+  implicit def evalDiff[A]( implicit D: Diff[A] ): Diff[Eval[A]] = D.contramap( _.value )
 
   implicit def optionDiff[A]( implicit D: Diff[A] ): Diff[Option[A]] = new Diff[Option[A]] {
     override def show( value: Option[A] ): String =
