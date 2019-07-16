@@ -7,6 +7,7 @@ import cats.data.Chain
 import cats.data.NonEmptyChain
 import cats.data.NonEmptyList
 import cats.data.NonEmptyVector
+import cats.data.Validated
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.Matchers
 import org.scalatest.WordSpec
@@ -92,6 +93,29 @@ class RecursiveParametricStdSpec extends WordSpec with Matchers with TypeChecked
           F(
             "EitherRec",
             "rec" -> T( T.Coproduct, "Right", F( "EitherRec", "rec" -> T( T.Coproduct, "Left", "foo" !== "bar" ) ) )
+          )
+        )
+      }
+    }
+
+    "has recursion under a Validated" should {
+      val diff: Diff[ValidatedRec] = {
+        import auto._
+        semi.diff
+      }
+
+      "use the provided either diff" in {
+        diff(
+          ValidatedRec( Validated.Valid( ValidatedRec( Validated.Invalid( "foo" ) ) ) ),
+          ValidatedRec( Validated.Valid( ValidatedRec( Validated.Invalid( "bar" ) ) ) ),
+        ).tree should ===(
+          F(
+            "ValidatedRec",
+            "rec" -> T(
+              T.Coproduct,
+              "Valid",
+              F( "ValidatedRec", "rec" -> T( T.Coproduct, "Invalid", "foo" !== "bar" ) )
+            )
           )
         )
       }
@@ -475,6 +499,7 @@ object RecursiveParametricStdSpec {
 
   case class OptionRec( rec: Option[OptionRec] )
   case class EitherRec( rec: Either[String, EitherRec] )
+  case class ValidatedRec( rec: Validated[String, ValidatedRec] )
   case class ListRec( rec: List[ListRec] )
   case class QueueRec( rec: Queue[QueueRec] )
   case class StreamRec( rec: Stream[StreamRec] )

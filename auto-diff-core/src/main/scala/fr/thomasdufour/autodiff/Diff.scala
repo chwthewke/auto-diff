@@ -6,6 +6,7 @@ import cats.data.Chain
 import cats.data.NonEmptyChain
 import cats.data.NonEmptyList
 import cats.data.NonEmptyVector
+import cats.data.Validated
 import cats.kernel.Eq
 import cats.syntax.option._
 import java.time.Instant
@@ -109,6 +110,21 @@ object Diff extends TupleDiff with ProductDiff {
       case ( _, _ )                   => Difference.Coproduct( "Either", Difference.Value( show( left ), show( right ) ) ).some
     }
   }
+
+  implicit def validatedDiff[A, B]( implicit DA: Diff[A], DB: Diff[B] ): Diff[Validated[A, B]] =
+    new Diff[Validated[A, B]] {
+      import Validated.Invalid
+      import Validated.Valid
+
+      override def show( value: Validated[A, B] ): String =
+        value.fold( a => s"Invalid(${DA.show( a )})", b => s"Valid(${DB.show( b )})" )
+
+      override def apply( left: Validated[A, B], right: Validated[A, B] ): Option[Difference] = ( left, right ) match {
+        case ( Invalid( l ), Invalid( r ) ) => DA.apply( l, r ).map( Difference.Coproduct( "Invalid", _ ) )
+        case ( Valid( l ), Valid( r ) )     => DB.apply( l, r ).map( Difference.Coproduct( "Valid", _ ) )
+        case ( _, _ )                       => Difference.Coproduct( "Validated", Difference.Value( show( left ), show( right ) ) ).some
+      }
+    }
 
   def inAnyOrder[A, CC[_]]( implicit D: Diff[A], H: DiffMatch.Hint[A], D1: AsIterable[CC] ): Diff[CC[A]] =
     InAnyOrder.anyOrderDiff[A].contramap( cc => InAnyOrder.diffable( cc ) )
