@@ -1,51 +1,51 @@
 [![Build Status](https://travis-ci.org/chwthewke/auto-diff.svg?branch=master)](https://travis-ci.org/chwthewke/auto-diff)
-[![codecov.io](http://codecov.io/github/chwthewke/auto-diff/coverage.svg?branch=master)](http://codecov.io/github/chwthewke/auto-diff?branch=master)
+[![codecov.io](https://codecov.io/gh/chwthewke/auto-diff/branch/master/graphs/badge.svg)](http://codecov.io/github/chwthewke/auto-diff?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/fr.thomasdufour/auto-diff-core_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/fr.thomasdufour/auto-diff-core_2.12)
 
-# Structural diff for scala types
+# Structural diff for Scala types
 
-This project provides the `Difference` ADT, which models structural diff of
+This project provides the `Difference` ADT, which models a structural diff of
 scala values. It is built (and depends) on
 [cats](https://github.com/typelevel/cats) and
 [shapeless](https://github.com/milessabin/shapeless).
 
-`Difference`s are computed via the `Diff[A]` type class that wraps a function
+`Difference`s are computed via the `Diff[A]` type class that provides a function
 of type `(A, A) => Option[Difference]`.
  
-The goal of this library is to provide convenient and extensible generic
+The goal of this library is to provide convenient, customizable and extensible generic
 derivation of `Diff` instances, as well as a decent textual representation
 of `Difference` values.
 
+This is intended primarily as an aid for automated testing, and was motivated 
+by spending *way* too much time playing "Spot the difference" with large ADTs
+in test failure logs, but there may be other use cases.
+
 ```scala
-    case class Address( street: String, city: String )
-    case class Person( name: String, age: Int, address: Address )
+case class Address( street: String, city: String )
+case class Person( name: String, age: Int, address: Address )
 
-    import fr.thomasdufour.autodiff._
+import fr.thomasdufour.autodiff.Diff
+import fr.thomasdufour.autodiff.Pretty
+import fr.thomasdufour.autodiff.derived
 
-    implicit val personDiff: Diff[Person] = {
-      import derived.auto._
-      derived.semi.diff
-    }
+implicit val personDiff: Diff[Person] = {
+  import derived.auto._
+  derived.semi.diff
+}
 
-    Pretty.colorized2.showDiff(
-      Person( "Jean Martin", 29, Address( "2 rue Pasteur", "Lille" ) ),
-      Person( "Jean Martin", 55, Address( "2 rue Pasteur", "Lyon" ) )
-    )
+val difference = personDiff(
+  Person( "Jean Martin", 29, Address( "2 rue Pasteur", "Lille" ) ),
+  Person( "Jean Martin", 55, Address( "2 rue Pasteur", "Lyon" ) )
+)
+
+println( Pretty.colorized2.show( difference ) )
 ```
 
-yields (with some ANSI coloring that I can't figure how to add here):
+yields:
 
-```
-in Person
-- age
-  - 29 -> 55
-- address
-  - in Address
-    - city
-      - Lille -> Lyon
-```
+![result](doc/header.png)
 
-# How to use auto-diff
+## How to use auto-diff
 
 Only Scala 2.12 is supported at the moment.
 
@@ -61,26 +61,152 @@ libraryDependencies ++= Seq(
 ```
 
 For the current version, check the maven central badge at the top of this readme.
-# Current status
 
-- `Diff` instances can be derived for:
-  - primitive types as well as `String`, `UUID`,
-  - a selection of usual collection-like types, including `Map`, `Option` and `Either`
-  - enumeratum `Enum`s, via `autodiff-enumeratum`.
+## Obtaining `Diff` instances
 
-- Generic derivation (for `LabelledGeneric` types) is provided by `autodiff-generic`, and is opt-in like e.g. in [circe](https://circe.io)
-  - either automatic with `import fr.thomasdufour.autodiff.generic.auto._`
-  - or semi-automatic with `import fr.thomasdufour.autodiff.generic.semiauto._` and using `deriveDiff`
+`Diff` instances are available implicitly (from the companion object) for:
+- primitive types
+- `String` and `UUID`
+- `java.time` types
+- Scala tuples
+- Some collections and ADTs, including:
+  - `Option`
+  - `Either`
+  - `List`, `Vector`, *finite* `Stream`, `Set`, `Map` and a few more specialized variants
+  - `Iterable` as a fallback
+- `cats.data` types including `Validated`, `Chain` and `NonEmpty{Chain|List|Vector}`
+- enumeratum `Enum`s when using the `autodiff-enumeratum` module.
 
-- The `Difference` type has only a couple textual representation options 
-  and no convenience methods to speak of.
+```scala
+import fr.thomasdufour.autodiff.Diff
+import fr.thomasdufour.autodiff.Pretty
 
-# Future work
+def printDiff[A: Diff]( x: A, y: A ): Unit =
+  println( Pretty.colorized2.showDiff( x, y ) )
 
-- Further API exploration for the "front-end", including test framework
-  integration.
-- Improve test coverage
+printDiff( 1, 2 )
+printDiff( "abc", "def" )
+
+printDiff( Some( "abc" ), None )
+printDiff( Left( "error" ), Right( 42 ) )
+printDiff[Either[String, Int]]( Right( 66 ), Right( 42 ) )
+
+printDiff( 1 :: 2 :: Nil, 1 :: 3 :: 4 :: Nil )
+printDiff( Map( "a" -> 1, "b" -> 2 ), Map( "b" -> 3, "a" -> 1 ) )
+```
+
+![result](doc/standard.png)
+
+### Generic derivation
+
+Generic derivation is based on `shapeless.LabelledGeneric`, and is available for:
+- case classes and objects
+- sealed trait hierarchies
+
+Like in Typelevel [kittens](https://github.com/typelevel/kittens), there are three modes
+of generic derivation: semi-automatic, full-automatic, and cached full-automatic.
+
+As these modes are so directly copied from kittens, the best explanation of how they work
+would be found in the kittens [README](https://github.com/typelevel/kittens#three-modes-of-derivation)
+
+The recommended mode is semi-automatic, with auto-derivation locally in scope and assigning the
+resulting instances to (implicit) `val`s.
+
+Example:
+
+```scala
+case class Item( description: String )
+case class Bag( items: List[Item] )
+
+import fr.thomasdufour.autodiff.Diff
+import fr.thomasdufour.autodiff.Pretty
+import fr.thomasdufour.autodiff.derived
+
+implicit val bagDiff: Diff[Bag] = {
+  import derived.auto._
+  derived.semi.diff
+}
+
+println(
+  Pretty.colorized2.showDiff(
+    Bag( Item( "a wombat" ) :: Item( "coffee" ) :: Item( "a green fountain pen" ) :: Nil ),
+    Bag( Item( "4 paperclips" ) :: Item( "coffee" ) :: Nil )
+  ) )
+```
+
+![result](doc/simplederivation.png)
+
+Generic derivation should work with recursive types, including mutually recursive types
+and parametric recursive types. See
+[the tests](doc/auto-diff-tests/src/test/scala/fr/thomasdufour/autodiff/derived)
+for some examples 
+
+## Customization
+
+### Type-driven
+
+A `Diff` instance can be customized by having an implicit Diff "override" in scope for a field,
+for example we might consider that the order of the items in the bag is irrelevant (but without
+the ability to modify `Bag` to have a `Set[Item]`, say):
+
+```scala
+case class Item( description: String )
+case class Bag( items: List[Item] )
+
+import fr.thomasdufour.autodiff.Diff
+import fr.thomasdufour.autodiff.Pretty
+import fr.thomasdufour.autodiff.derived
+
+implicit val bagDiff: Diff[Bag] = {
+  import derived.auto._
+  implicit val diffItems: Diff[List[Item]] = Diff.inAnyOrder
+
+  derived.semi.diff
+}
+
+println(
+  Pretty.colorized2.showDiff(
+    Bag( Item( "a wombat" ) :: Nil ),
+    Bag( Item( "4 paperclips" ) :: Item( "a wombat" ) :: Nil )
+  )
+)
+``` 
+
+![result](doc/typedrivencustomderivation.png)
+
+### Manual construction
+
+There are a number of ways to manually create `Diff` instances.
+
+The most flexible (and possibly complex) would be to implement the trait directly. Other than that,
+we can create a diff from:
+  - An equality function (and a show function): `Diff.explicitEqShow[A]( eqv: ( A, A ) => Boolean, show: A => String ): Diff[A]`
+  - Implicit `cats.Eq` and `cats.Show` instances: `Diff.implicitEqShow[A]( implicit E: Eq[A], S: Show[A] ): Diff[A]`
+  - The default equality and toString: `Diff.defaultEqShow[A]: Diff[A]`
+
+There are also functions `Diff.forProductN` (1 &leq; N &leq; 22) that allow manually deconstructing
+types to (diffable) components.
+
+Finally, there are `Diff.ignore` that never reports its arguments as different and `Diff.inAnyOrder`
+that compares collections as if they were unordered bags.
+
+### `DiffMatch.Hint`
+
+(TODO)
+
+## Future work (in no particular order)
+
+- Support Scala 2.13 (and cross-build for 2.12) - this is actually #1.
+- Scala.js support, perhaps
+- Further API exploration for the "front-end", including test framework integration.
+- Improve test coverage, especially text rendering of differences.
+- Integrate `cats.Show` rather than having `Diff` also carry a show method
+  - Maybe try to expand on that to have the show function drill "just deep enough" into data.
 
 # Credits
 
 [xdotai/diff](https://github.com/xdotai/diff) for inspiration.
+
+[circe](https://github.com/circe/circe) for some implementation techniques in early versions.
+
+[kittens](https://github.com/typelevel/kittens) for generic derivation guidelines.
