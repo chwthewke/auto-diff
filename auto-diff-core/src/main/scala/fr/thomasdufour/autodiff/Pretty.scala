@@ -3,8 +3,10 @@ package fr.thomasdufour.autodiff
 trait Pretty {
   def show( d: Difference ): String
 
-  def showDiff[A: Diff]( left: A, right: A ): String =
-    Diff[A].apply( left, right ).fold( "" )( show )
+  def show( d: Option[Difference] ): String = d.fold( "" )( show )
+
+  def showDiff[A]( left: A, right: A )( implicit D: Diff[A] ): String =
+    show( D( left, right ) )
 }
 
 object Pretty {

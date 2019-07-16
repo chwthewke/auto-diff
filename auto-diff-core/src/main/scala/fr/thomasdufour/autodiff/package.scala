@@ -21,11 +21,18 @@ package object autodiff {
     Either
       .catchOnly[InternalError]( klass.getSimpleName )
       .recoverWith {
-        case _ =>
-          Either.catchNonFatal(
-            dropUntilLast( "$" )( dropUntilLast( "." )( klass.getName.stripSuffix( "$" ) ) )
-          )
+        case _ => Right( guessSimpleClassName( klass.getName ) )
       }
       .getOrElse( "<unknown>" )
+
+  private[autodiff] def guessSimpleClassName( className: String ): String = {
+    val name  = dropUntilLast( "." )( className )
+    val parts = name.split( '$' ).toList.reverse
+
+    parts
+      .find( p => p.nonEmpty && !p( 0 ).isDigit )
+      .orElse( parts.find( p => p.nonEmpty ) )
+      .getOrElse( "<unknown>" )
+  }
 
 }
