@@ -47,7 +47,7 @@ yields:
 
 ## How to use auto-diff
 
-Only Scala 2.12 is supported at the moment.
+Only Scala 2.12 and 2.13 are supported, and 2.13 support starts in version 0.4.0.
 
 Add some or all of the following to your `build.sbt`:
 
@@ -72,7 +72,7 @@ For the current version, check the maven central badge at the top of this readme
 - Some collections and ADTs, including:
   - `Option`
   - `Either`
-  - `List`, `Vector`, *finite* `Stream`, `Set`, `Map` and a few more specialized variants
+  - `List`, `Vector`, *finite* `Stream` and `LazyList`, `Set`, `Map` and a few more specialized variants
   - `Iterable` as a fallback
 - `cats.data` types including `Validated`, `Chain` and `NonEmpty{Chain|List|Vector}`
 - enumeratum `Enum`s when using the `autodiff-enumeratum` module.
