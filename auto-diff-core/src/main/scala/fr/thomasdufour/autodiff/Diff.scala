@@ -39,7 +39,7 @@ trait Diff[A] { self =>
     Diff.instance( ( l, r ) => self.apply( f( l ), f( r ) ), v => self.show( f( v ) ) )
 }
 
-object Diff extends TupleDiff with ProductDiff with Arrays.DiffImplicits {
+object Diff extends TupleDiff with ProductDiff with DiffVersionSpecific {
   def apply[A]( implicit ev: Diff[A] ): Diff[A] = ev
 
   def instance[A]( diff: ( A, A ) => Option[Difference], show0: A => String ): Diff[A] =

@@ -6,7 +6,7 @@ trait AsIterable[F[_]] {
   def asIterable[A]( coll: F[A] ): Iterable[A]
 }
 
-object AsIterable extends Arrays.AsIterableImplicits with AsIterableLowPriority {
+object AsIterable extends AsIterableVersionSpecific with AsIterableLowPriority {
   def apply[F[_]]( implicit ev: AsIterable[F] ): AsIterable[F] = ev
 
   implicit def collectionAsIterable[F[x] <: Iterable[x]]: AsIterable[F] = new AsIterable[F] {
