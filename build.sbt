@@ -28,6 +28,15 @@ val autodiffSettings: Seq[Def.Setting[_]] =
     Dependencies.settings ++
     Seq( testOptions in Test += Tests.Argument( TestFrameworks.ScalaTest, "-oDF" ) )
 
+val silencerVersion = "1.4.1"
+
+val silencerSettings = Seq(
+  libraryDependencies ++= Seq(
+    compilerPlugin( "com.github.ghik" %% "silencer-plugin" % silencerVersion ),
+    "com.github.ghik" %% "silencer-lib" % silencerVersion % Provided
+  )
+)
+
 def withOverwrite( enable: Boolean )( config: PublishConfiguration ): PublishConfiguration =
   config.withOverwrite( enable )
 
@@ -83,6 +92,7 @@ val noPublishSettings = Seq(
 
 val `auto-diff-core` = project
   .settings( autodiffSettings )
+  .settings( silencerSettings )
   .settings( SbtBuildInfo.buildSettings( "AutodiffBuildInfo" ) )
   .settings( Console.coreImports.settings )
   .settings( sourceGenerators in Compile += (sourceManaged in Compile).map( Boilerplate.gen ).taskValue )
