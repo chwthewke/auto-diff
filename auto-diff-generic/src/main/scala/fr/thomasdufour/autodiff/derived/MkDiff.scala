@@ -8,6 +8,8 @@ import shapeless.Coproduct
 import shapeless.HList
 import shapeless.LabelledGeneric
 import shapeless.Lazy
+//
+import GuessClassName.getClassSimpleName
 
 @implicitNotFound( "Could not derive an instance of Diff[${A}]" )
 trait MkDiff[A] extends Diff[A]
