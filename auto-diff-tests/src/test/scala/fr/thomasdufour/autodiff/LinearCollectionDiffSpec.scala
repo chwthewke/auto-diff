@@ -4,6 +4,7 @@ import cats.data.Chain
 import cats.data.NonEmptyChain
 import cats.data.NonEmptyList
 import cats.data.NonEmptyVector
+import com.github.ghik.silencer.silent
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalactic.TypeCheckedTripleEquals
@@ -11,7 +12,6 @@ import org.scalatest.Matchers
 import org.scalatest.WordSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import scala.collection.immutable.Queue
-import scala.reflect.ClassTag
 
 class LinearCollectionDiffSpec
     extends WordSpec
@@ -107,6 +107,7 @@ class LinearCollectionDiffSpec
   }
 
   "Diffing Streams" should {
+    @silent( "deprecated" )
     val diff = Diff[Stream[Int]]
     behave like collectionDiffNonEmptyCase( "Stream", diff )
     behave like collectionDiffEmptyCase( "Stream", diff )
@@ -133,75 +134,6 @@ class LinearCollectionDiffSpec
 }
 
 object LinearCollectionDiffSpec {
-  trait FromNonEmptyVector[A, C[_]] {
-    def fromNev( nev: NonEmptyVector[A] ): C[A]
-  }
-
-  object FromNonEmptyVector {
-
-    implicit def nonEmptyChainFromNonEmptyVector[A]: FromNonEmptyVector[A, NonEmptyChain] =
-      new FromNonEmptyVector[A, NonEmptyChain] {
-        override def fromNev( nev: NonEmptyVector[A] ): NonEmptyChain[A] = NonEmptyChain.fromNonEmptyVector( nev )
-      }
-
-    implicit def nonEmptyListFromNonEmptyVector[A]: FromNonEmptyVector[A, NonEmptyList] =
-      new FromNonEmptyVector[A, NonEmptyList] {
-        override def fromNev( nev: NonEmptyVector[A] ): NonEmptyList[A] = NonEmptyList.fromReducible( nev )
-      }
-
-    implicit def nonEmptyVectorFromNonEmptyVector[A]: FromNonEmptyVector[A, NonEmptyVector] =
-      new FromNonEmptyVector[A, NonEmptyVector] {
-        override def fromNev( nev: NonEmptyVector[A] ): NonEmptyVector[A] = nev
-      }
-
-    implicit def fromVector[A, F[_]]( implicit ev: FromVector[A, F] ): FromNonEmptyVector[A, F] = ev
-  }
-
-  trait FromVector[A, C[_]] extends FromNonEmptyVector[A, C] {
-    def fromVector( vec: Vector[A] ): C[A]
-
-    override def fromNev( nel: NonEmptyVector[A] ): C[A] = fromVector( nel.toVector )
-  }
-
-  object FromVector {
-    implicit def chainFromVector[A]: FromVector[A, Chain] =
-      new FromVector[A, Chain] {
-        override def fromVector( vec: Vector[A] ): Chain[A] = Chain.fromSeq( vec )
-      }
-
-    implicit def listFromVector[A]: FromVector[A, List] =
-      new FromVector[A, List] {
-        override def fromVector( vec: Vector[A] ): List[A] = vec.toList
-      }
-
-    implicit def queueFromVector[A]: FromVector[A, Queue] =
-      new FromVector[A, Queue] {
-        override def fromVector( vec: Vector[A] ): Queue[A] = vec.to[Queue]
-      }
-
-    implicit def streamFromVector[A]: FromVector[A, Stream] =
-      new FromVector[A, Stream] {
-        override def fromVector( vec: Vector[A] ): Stream[A] = vec.toStream
-      }
-
-    implicit def vectorFromVector[A]: FromVector[A, Vector] =
-      new FromVector[A, Vector] {
-        override def fromVector( vec: Vector[A] ): Vector[A] = vec
-      }
-
-    implicit def iterableFromVector[A]: FromVector[A, Iterable] =
-      new FromVector[A, Iterable] {
-        override def fromVector( vec: Vector[A] ): Iterable[A] = vec
-      }
-
-    implicit def arrayFromVector[A: ClassTag]: FromVector[A, Array] =
-      new FromVector[A, Array] {
-        override def fromVector( vec: Vector[A] ): Array[A] = vec.toArray
-      }
-
-    // NOTE not doing arrays because ClassTag, and I might remove it starting with Scala 2.13
-    // NOTE2 can do that with specialized TCs like in MapDiffSpec
-  }
 
   def genColl[C[_], A]( elem: Gen[A] )( implicit F: FromVector[A, C] ): Gen[C[A]] =
     Gen.sized( Gen.const ).flatMap( Gen.containerOfN[Vector, A]( _, elem ) ).map( F.fromVector )

@@ -13,7 +13,6 @@ import scala.collection.immutable.IntMap
 import scala.collection.immutable.ListMap
 import scala.collection.immutable.LongMap
 import scala.collection.immutable.Map
-import scala.collection.immutable.MapLike
 import scala.collection.immutable.Set
 import scala.collection.immutable.TreeMap
 
@@ -27,7 +26,7 @@ class MapDiffSpec
   import MapDiffSpec._
   import DiffOps._
 
-  def aMapDiff[K, V, C[v] <: MapLike[K, v, C[v]] with Map[K, v]](
+  def aMapDiff[K, V, C[v] <: Map[K, v] with Map[K, v]](
       name: String,
       genK: Gen[K],
       genV: Gen[V],

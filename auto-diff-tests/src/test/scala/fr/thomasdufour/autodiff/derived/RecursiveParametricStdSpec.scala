@@ -8,6 +8,7 @@ import cats.data.NonEmptyChain
 import cats.data.NonEmptyList
 import cats.data.NonEmptyVector
 import cats.data.Validated
+import com.github.ghik.silencer.silent
 import org.scalactic.TypeCheckedTripleEquals
 import org.scalatest.Matchers
 import org.scalatest.WordSpec
@@ -175,7 +176,7 @@ class RecursiveParametricStdSpec extends WordSpec with Matchers with TypeChecked
       }
     }
 
-    "has recursion under a Stream" should {
+    "has recursion under a Stream" should ({
 
       val diff: Diff[StreamRec] = {
         import auto._
@@ -201,7 +202,7 @@ class RecursiveParametricStdSpec extends WordSpec with Matchers with TypeChecked
         )
 
       }
-    }
+    }: @silent( "deprecated" ))
 
     "has recursion under a Vector" should {
 
@@ -502,6 +503,7 @@ object RecursiveParametricStdSpec {
   case class ValidatedRec( rec: Validated[String, ValidatedRec] )
   case class ListRec( rec: List[ListRec] )
   case class QueueRec( rec: Queue[QueueRec] )
+  @silent( "deprecated" )
   case class StreamRec( rec: Stream[StreamRec] )
   case class VectorRec( rec: Vector[VectorRec] )
   case class ArrayRec( rec: Array[ArrayRec] )
@@ -517,8 +519,8 @@ object RecursiveParametricStdSpec {
           if (cmpSize != 0)
             cmpSize
           else
-            x.rec.toIterator
-              .zip( y.rec.toIterator )
+            x.rec.iterator
+              .zip( y.rec.iterator )
               .map( (compare _).tupled )
               .find( _ != 0 )
               .getOrElse( 0 )

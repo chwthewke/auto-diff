@@ -121,6 +121,7 @@ val `auto-diff-scalatest` = project
 
 val `auto-diff-tests` = project
   .settings( autodiffSettings )
+  .settings( silencerSettings )
   .settings( Console.coreImports.settings )
   .settings( libraryDependencies ++= Dependencies.scalatestForTests ++ Dependencies.scalacheck ++ Dependencies.splain )
   .settings( noPublishSettings )
