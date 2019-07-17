@@ -5,18 +5,20 @@ import sbt.Keys._
 object Dependencies {
   type D = Seq[ModuleID]
 
-  val kindProjector: D = Seq( compilerPlugin( "org.spire-math" %% "kind-projector" % "0.9.10" ) )
+  val kindProjector: D = Seq(
+    compilerPlugin( "org.typelevel" %% "kind-projector" % "0.10.3" cross CrossVersion.binary ) )
 
   val splain: D = Seq( compilerPlugin( "io.tryp" % "splain" % "0.4.1" cross CrossVersion.patch ) )
 
-  val catsVersion = "1.6.1"
+  val catsVersion = "2.0.0-M4"
 
   val cats: D = Seq( "org.typelevel" %% "cats-core" % catsVersion )
 
   val shapeless: D = Seq( "com.chuusai" %% "shapeless" % "2.3.3" )
 
   val scalacheck: D =
-    Seq( "org.scalacheck" %% "scalacheck" % "1.14.0" % Test, "io.chrisdavenport" %% "cats-scalacheck" % "0.1.1" % Test )
+    Seq( "org.scalacheck"   %% "scalacheck"      % "1.14.0"   % Test,
+        "io.chrisdavenport" %% "cats-scalacheck" % "0.2.0-M1" % Test )
 
   val scalatest: D = Seq( "org.scalatest" %% "scalatest" % "3.0.8" )
 

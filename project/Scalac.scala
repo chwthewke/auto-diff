@@ -2,29 +2,29 @@ import sbt._
 import sbt.Keys._
 
 object Scalac {
-  val options: Seq[String] = Seq(
-    "-deprecation",
-    "-encoding",
-    "UTF-8",
-    "-feature",
-    "-language:higherKinds",
-    "-unchecked",
-    "-Xfatal-warnings",
-    "-Xfuture",
-    "-Xlint:-unused",
-    "-Yno-adapted-args",
-    "-Ypartial-unification",
-    "-Ywarn-dead-code",
-    "-Ywarn-numeric-widen",
-    "-Ywarn-unused:imports,patvars,implicits,params",
-    "-Ywarn-value-discard"
-  )
+  def makeOptions( scalaVersion: String ): Seq[String] =
+    Seq(
+      "-deprecation",
+      "-encoding",
+      "UTF-8",
+      "-feature",
+      "-language:higherKinds",
+      "-unchecked",
+      "-Xfatal-warnings",
+      "-Xlint:-unused",
+      "-Ywarn-dead-code",
+      "-Ywarn-numeric-widen",
+      "-Ywarn-unused:imports,patvars,implicits,params",
+      "-Ywarn-value-discard"
+    ) ++ extraOptions( scalaVersion )
 
-  def workaroundForIntellij( opts: Seq[String] ): Seq[String] =
-    if (sys.props.contains( "idea.runid" ))
-      forTest( opts )
-    else
-      opts
+  def extraOptions( scalaVersion: String ): Seq[String] =
+    CrossVersion.partialVersion( scalaVersion ) match {
+      case Some( ( 2, y ) ) if y <= 12 =>
+        Seq( "-Xfuture", "-Yno-adapted-args", "-Ypartial-unification" )
+      case _ =>
+        Nil
+    }
 
   def forTest( opts: Seq[String] ): Seq[String] =
     opts.filterNot( _ == "-Ywarn-value-discard" )
@@ -38,7 +38,7 @@ object Scalac {
   val settings: Seq[Def.Setting[_]] =
     // format: off
     Seq(
-      scalacOptions                         ++= workaroundForIntellij( options ),
+      scalacOptions                         ++= makeOptions( scalaVersion.value ),
       scalacOptions   in Test               ~=  forTest,
       scalacOptions   in (Compile, console) ~=  forConsole,
       scalacOptions   in (Test,    console) :=  forTest( (scalacOptions in (Compile, console)).value )

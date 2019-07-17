@@ -6,7 +6,6 @@ import ReleaseTransformations._
 
 // format: off
 scalaOrganization in ThisBuild := "org.scala-lang"
-scalaVersion      in ThisBuild := "2.12.8"
 conflictManager   in ThisBuild := ConflictManager.strict
 // format: on
 
@@ -22,12 +21,12 @@ val sharedSettings = Seq(
 
 enablePlugins( Scalafmt )
 
-val autodiffSettings =
+val autodiffSettings: Seq[Def.Setting[_]] =
   Defaults.coreDefaultSettings ++
     sharedSettings ++
     Scalac.settings ++
-    Dependencies.settings :+
-    (testOptions in Test += Tests.Argument( TestFrameworks.ScalaTest, "-oDF" ))
+    Dependencies.settings ++
+    Seq( testOptions in Test += Tests.Argument( TestFrameworks.ScalaTest, "-oDF" ) )
 
 def withOverwrite( enable: Boolean )( config: PublishConfiguration ): PublishConfiguration =
   config.withOverwrite( enable )
@@ -43,12 +42,15 @@ val publishSettings = Seq(
   licenses := Seq( "APL2" -> url( "http://www.apache.org/licenses/LICENSE-2.0.txt" ) ),
   homepage := Some( url( "https://github.com/chwthewke/auto-diff" ) ),
   scmInfo := Some(
-    ScmInfo( url( "https://github.com/chwthewke/auto-diff" ), "scm:git:git@github.com:chwthewke/auto-diff.git" ) ),
+    ScmInfo( url( "https://github.com/chwthewke/auto-diff" ), "scm:git:git@github.com:chwthewke/auto-diff.git" )
+  ),
   developers := List(
-    Developer( id = "chwthewke",
-              name = "Thomas Dufour",
-              email = "td@thomasdufour.fr",
-              url = url( "https://github.com/chwthewke" ) )
+    Developer(
+      id = "chwthewke",
+      name = "Thomas Dufour",
+      email = "td@thomasdufour.fr",
+      url = url( "https://github.com/chwthewke" )
+    )
   ),
   publishConfiguration := withOverwrite( isSnapshot.value )( publishConfiguration.value ),
   publishSignedConfiguration := withOverwrite( isSnapshot.value )( publishSignedConfiguration.value ),
@@ -119,4 +121,5 @@ val `auto-diff` = project
   .settings( sharedSettings )
   .settings( Dependencies.overrides )
   .settings( noPublishSettings )
+  .settings( crossScalaVersions := Nil )
   .aggregate( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-generic`, `auto-diff-scalatest`, `auto-diff-tests` )
