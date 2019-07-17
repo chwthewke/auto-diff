@@ -1,13 +1,12 @@
 package fr.thomasdufour.autodiff
 
-import scala.collection.SetLike
 import scala.collection.immutable.HashSet
 import scala.collection.immutable.ListSet
 import scala.collection.immutable.TreeSet
 
-object SetDiff {
+private[autodiff] object SetDiff {
 
-  def setLikeDiff[A, CC <: SetLike[A, CC] with Set[A]](
+  def setLikeDiff[A, CC <: Set[A]](
       name: String
   )( implicit D: Diff[A], H: DiffMatch.Hint[A] ): Diff[CC] =
     InAnyOrder

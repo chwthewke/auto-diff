@@ -2,12 +2,16 @@ package fr.thomasdufour.autodiff
 
 import cats.data.Ior
 import cats.data.NonEmptyList
+import scala.collection.immutable.HashMap
+import scala.collection.immutable.IntMap
+import scala.collection.immutable.ListMap
+import scala.collection.immutable.LongMap
+import scala.collection.immutable.Map
+import scala.collection.immutable.TreeMap
 
-import scala.collection.immutable._
+private[autodiff] object MapDiff {
 
-object MapDiff {
-
-  def mapLikeDiff[K, V, CC <: MapLike[K, V, CC] with Map[K, V]](
+  def mapLikeDiff[K, V, CC <: Map[K, V]](
       name: String
   )( implicit DK: Diff[K], DV: Diff[V] ): Diff[CC] = {
 

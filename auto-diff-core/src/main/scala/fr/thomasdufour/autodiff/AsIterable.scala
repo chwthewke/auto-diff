@@ -6,15 +6,11 @@ trait AsIterable[F[_]] {
   def asIterable[A]( coll: F[A] ): Iterable[A]
 }
 
-object AsIterable extends AsIterableLowPriority {
+object AsIterable extends Arrays.AsIterableImplicits with AsIterableLowPriority {
   def apply[F[_]]( implicit ev: AsIterable[F] ): AsIterable[F] = ev
 
   implicit def collectionAsIterable[F[x] <: Iterable[x]]: AsIterable[F] = new AsIterable[F] {
     override def asIterable[A]( coll: F[A] ): Iterable[A] = coll
-  }
-
-  implicit def arrayAsIterable: AsIterable[Array] = new AsIterable[Array] {
-    override def asIterable[A]( coll: Array[A] ): Iterable[A] = coll.to[Iterable]
   }
 
   private[autodiff] implicit class AsIterableOps[F[_], A]( val self: F[A] ) extends AnyVal {

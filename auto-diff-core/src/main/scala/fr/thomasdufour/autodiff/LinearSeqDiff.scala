@@ -37,6 +37,8 @@ private[autodiff] object LinearSeqDiff {
       override def show( value: CC ): String = value.map( D.show ).mkString( s"$name(", ", ", ")" )
     }
 
+  def diffAsList[A]( name: String )( implicit D: Diff[A] ): Diff[List[A]] = diffLinearSeq[A, List[A]]( name )
+
   def listDiff[A]( implicit D: Diff[A] ): Diff[List[A]]     = diffLinearSeq[A, List[A]]( "List" )
   def queueDiff[A]( implicit D: Diff[A] ): Diff[Queue[A]]   = diffLinearSeq[A, Queue[A]]( "Queue" )
   def streamDiff[A]( implicit D: Diff[A] ): Diff[Stream[A]] = diffLinearSeq[A, Stream[A]]( "Stream" )

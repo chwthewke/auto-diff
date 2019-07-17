@@ -38,7 +38,7 @@ trait Diff[A] { self =>
     Diff.instance( ( l, r ) => self.apply( f( l ), f( r ) ), v => self.show( f( v ) ) )
 }
 
-object Diff extends TupleDiff with ProductDiff {
+object Diff extends TupleDiff with ProductDiff with Arrays.DiffImplicits {
   def apply[A]( implicit ev: Diff[A] ): Diff[A] = ev
 
   def instance[A]( diff: ( A, A ) => Option[Difference], show0: A => String ): Diff[A] =
@@ -136,7 +136,6 @@ object Diff extends TupleDiff with ProductDiff {
   implicit def queueDiff[A]( implicit D: Diff[A] ): Diff[Queue[A]]   = LinearSeqDiff.queueDiff
   implicit def streamDiff[A]( implicit D: Diff[A] ): Diff[Stream[A]] = LinearSeqDiff.streamDiff
   implicit def vectorDiff[A]( implicit D: Diff[A] ): Diff[Vector[A]] = IndexedSeqDiff.vectorDiff
-  implicit def arrayDiff[A]( implicit D: Diff[A] ): Diff[Array[A]]   = IndexedSeqDiff.arrayDiff
 
   implicit def setDiff[A]( implicit D: Diff[A] ): Diff[Set[A]]         = SetDiff.setDiff
   implicit def listSetDiff[A]( implicit D: Diff[A] ): Diff[ListSet[A]] = SetDiff.listSetDiff
