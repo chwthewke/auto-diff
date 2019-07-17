@@ -12,7 +12,9 @@ object Scalafmt extends AutoPlugin {
     scalafmtGenerateConfig := {
       IO.write(
         file( ".scalafmt.conf" ),
-        """style = defaultWithAlign
+        """version = "2.0.0"
+          |
+          |style = defaultWithAlign
           |maxColumn = 120
           |lineEndings = preserve
           |
@@ -27,7 +29,7 @@ object Scalafmt extends AutoPlugin {
     scalafmtOnCompile := true,
     scalafmtConfig := {
       val _ = scalafmtGenerateConfig.value
-      Some( file( ".scalafmt.conf" ) )
+      file( ".scalafmt.conf" )
     }
   )
 }

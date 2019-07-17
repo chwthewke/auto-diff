@@ -221,11 +221,10 @@ object LinearCollectionDiffSpec {
       ix   <- Gen.choose( 0, size - 1 )
       xs   <- Gen.containerOfN[Vector, A]( size, elem )
       y    <- N.nudge( elem, xs( ix ) )
-    } yield
-      (
-        ix,
-        F.fromNev( NonEmptyVector.fromVectorUnsafe( xs ) ),
-        F.fromNev( NonEmptyVector.fromVectorUnsafe( xs.updated( ix, y ) ) )
-      )
+    } yield (
+      ix,
+      F.fromNev( NonEmptyVector.fromVectorUnsafe( xs ) ),
+      F.fromNev( NonEmptyVector.fromVectorUnsafe( xs.updated( ix, y ) ) )
+    )
 
 }

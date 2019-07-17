@@ -264,7 +264,7 @@ class ShapelessProductSpec
   "a Product diff for Tuple18" should {
 
     val diffProduct18
-      : Diff[( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )] =
+        : Diff[( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )] =
       Diff.forProduct18( "Tuple18" )(
         "_1",
         "_2",
@@ -292,7 +292,7 @@ class ShapelessProductSpec
   "a Product diff for Tuple19" should {
 
     val diffProduct19
-      : Diff[( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )] =
+        : Diff[( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )] =
       Diff.forProduct19( "Tuple19" )(
         "_1",
         "_2",
@@ -321,7 +321,7 @@ class ShapelessProductSpec
   "a Product diff for Tuple20" should {
 
     val diffProduct20
-      : Diff[( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )] =
+        : Diff[( Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int )] =
       Diff.forProduct20( "Tuple20" )(
         "_1",
         "_2",

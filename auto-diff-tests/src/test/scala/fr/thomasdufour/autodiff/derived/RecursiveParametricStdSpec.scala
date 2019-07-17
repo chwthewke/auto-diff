@@ -88,7 +88,7 @@ class RecursiveParametricStdSpec extends WordSpec with Matchers with TypeChecked
       "use the provided either diff" in {
         diff(
           EitherRec( Right( EitherRec( Left( "foo" ) ) ) ),
-          EitherRec( Right( EitherRec( Left( "bar" ) ) ) ),
+          EitherRec( Right( EitherRec( Left( "bar" ) ) ) )
         ).tree should ===(
           F(
             "EitherRec",
@@ -107,7 +107,7 @@ class RecursiveParametricStdSpec extends WordSpec with Matchers with TypeChecked
       "use the provided either diff" in {
         diff(
           ValidatedRec( Validated.Valid( ValidatedRec( Validated.Invalid( "foo" ) ) ) ),
-          ValidatedRec( Validated.Valid( ValidatedRec( Validated.Invalid( "bar" ) ) ) ),
+          ValidatedRec( Validated.Valid( ValidatedRec( Validated.Invalid( "bar" ) ) ) )
         ).tree should ===(
           F(
             "ValidatedRec",
