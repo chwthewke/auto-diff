@@ -135,7 +135,7 @@ object Diff extends TupleDiff with ProductDiff with Arrays.DiffImplicits {
 
   implicit def listDiff[A]( implicit D: Diff[A] ): Diff[List[A]]   = LinearSeqDiff.listDiff
   implicit def queueDiff[A]( implicit D: Diff[A] ): Diff[Queue[A]] = LinearSeqDiff.queueDiff
-  @silent
+  @silent( "deprecated" )
   implicit def streamDiff[A]( implicit D: Diff[A] ): Diff[Stream[A]] = LinearSeqDiff.streamDiff
   implicit def vectorDiff[A]( implicit D: Diff[A] ): Diff[Vector[A]] = IndexedSeqDiff.vectorDiff
 
