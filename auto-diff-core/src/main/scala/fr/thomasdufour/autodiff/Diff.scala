@@ -10,6 +10,7 @@ import cats.data.NonEmptyVector
 import cats.data.Validated
 import cats.kernel.Eq
 import cats.syntax.option._
+import com.github.ghik.silencer.silent
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -132,8 +133,9 @@ object Diff extends TupleDiff with ProductDiff with Arrays.DiffImplicits {
   def inAnyOrder[A, CC[_]]( implicit D: Diff[A], H: DiffMatch.Hint[A], D1: AsIterable[CC] ): Diff[CC[A]] =
     InAnyOrder.anyOrderDiff[A].contramap( cc => InAnyOrder.diffable( cc ) )
 
-  implicit def listDiff[A]( implicit D: Diff[A] ): Diff[List[A]]     = LinearSeqDiff.listDiff
-  implicit def queueDiff[A]( implicit D: Diff[A] ): Diff[Queue[A]]   = LinearSeqDiff.queueDiff
+  implicit def listDiff[A]( implicit D: Diff[A] ): Diff[List[A]]   = LinearSeqDiff.listDiff
+  implicit def queueDiff[A]( implicit D: Diff[A] ): Diff[Queue[A]] = LinearSeqDiff.queueDiff
+  @silent
   implicit def streamDiff[A]( implicit D: Diff[A] ): Diff[Stream[A]] = LinearSeqDiff.streamDiff
   implicit def vectorDiff[A]( implicit D: Diff[A] ): Diff[Vector[A]] = IndexedSeqDiff.vectorDiff
 
