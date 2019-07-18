@@ -2,7 +2,10 @@
 
 sbt_cmd="sbt ++$TRAVIS_SCALA_VERSION"
 
-$sbt_cmd package && \
-  $sbt_cmd coverage test coverageReport && \
-  $sbt_cmd publishLocal && \
-  ( if [[ "$TRAVIS_SCALA_VERSION" == "2.13.0" ]]; then bash <(curl -s https://codecov.io/bash); fi )
+$sbt_cmd publishLocal
+
+$sbt_cmd coverage auto-diff-coverage/test auto-diff-coverage/coverageReport
+
+if [[ "$TRAVIS_SCALA_VERSION" =~ ^2.13 ]]; then
+  bash <(curl -s https://codecov.io/bash)
+fi 

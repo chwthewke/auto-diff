@@ -16,7 +16,8 @@ val sharedSettings = Seq(
       Opts.resolver.sonatypeSnapshots
     else
       Opts.resolver.sonatypeStaging
-  )
+  ),
+  coverageExcludedPackages := "fr\\.thomasdufour\\.autodiff\\.examples"
 )
 
 enablePlugins( Scalafmt )
@@ -26,7 +27,9 @@ val autodiffSettings: Seq[Def.Setting[_]] =
     sharedSettings ++
     Scalac.settings ++
     Dependencies.settings ++
-    Seq( testOptions in Test += Tests.Argument( TestFrameworks.ScalaTest, "-oDF" ) )
+    Seq(
+      testOptions in Test += Tests.Argument( TestFrameworks.ScalaTest, "-oDF" )
+    )
 
 val silencerVersion = "1.4.1"
 
@@ -127,10 +130,30 @@ val `auto-diff-tests` = project
   .settings( noPublishSettings )
   .dependsOn( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-generic`, `auto-diff-scalatest` )
 
+val `auto-diff-examples` = project
+  .settings( autodiffSettings )
+  .settings( Console.coreImports.settings )
+  .settings( noPublishSettings )
+  .dependsOn( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-generic`, `auto-diff-scalatest` )
+
 val `auto-diff` = project
   .in( file( "." ) )
   .settings( sharedSettings )
   .settings( Dependencies.overrides )
+  .settings( noPublishSettings )
+  .settings( crossScalaVersions := Nil )
+  .aggregate(
+    `auto-diff-core`,
+    `auto-diff-enumeratum`,
+    `auto-diff-generic`,
+    `auto-diff-scalatest`,
+    `auto-diff-tests`,
+    `auto-diff-examples`
+  )
+
+val `auto-diff-coverage` = project
+  .in( file( "target/auto-diff-coverage" ) )
+  .settings( sharedSettings )
   .settings( noPublishSettings )
   .settings( crossScalaVersions := Nil )
   .aggregate( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-generic`, `auto-diff-scalatest`, `auto-diff-tests` )
