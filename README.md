@@ -49,6 +49,12 @@ yields:
 
 Only Scala 2.12 and 2.13 are supported, and 2.13 support starts in version 0.4.0.
 
+| **`auto-diff`** | **Scala**  | **Cats** |
+| --------------- | ---------- | -------- |
+| 0.3.0           | 2.12       | 1.6.1    |
+| 0.4.0-RC1       | 2.12, 2.13 | 2.0.0-M4 |
+
+
 Add some or all of the following to your `build.sbt`:
 
 ```scala
@@ -196,7 +202,7 @@ that compares collections as if they were unordered bags.
 
 ## Future work (in no particular order)
 
-- Support Scala 2.13 (and cross-build for 2.12) - this is actually #1.
+- ~~Support Scala 2.13 (and cross-build for 2.12) - this is actually #1.~~ OK, starting with 0.4.0-RC1.
 - Scala.js support, perhaps
 - Further API exploration for the "front-end", including test framework integration.
 - Improve test coverage, especially text rendering of differences.
