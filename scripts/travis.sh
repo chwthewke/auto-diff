@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 sbt_cmd="sbt ++$TRAVIS_SCALA_VERSION"
 
