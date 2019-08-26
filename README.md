@@ -52,7 +52,7 @@ Only Scala 2.12 and 2.13 are supported, and 2.13 support starts in version 0.4.0
 | **`auto-diff`** | **Scala**  | **Cats** |
 | --------------- | ---------- | -------- |
 | 0.3.0           | 2.12       | 1.6.1    |
-| 0.4.0-RC1       | 2.12, 2.13 | 2.0.0-M4 |
+| 0.4.0           | 2.12, 2.13 | 2.0.0    |
 
 
 Add some or all of the following to your `build.sbt`:

@@ -154,23 +154,23 @@ object MapDiffSpec {
   }
 
   object FromMap {
-    implicit def mapFromMap[K]: FromMap[K, Map[K, ?]] =
-      new FromMap[K, Map[K, ?]] {
+    implicit def mapFromMap[K]: FromMap[K, Map[K, *]] =
+      new FromMap[K, Map[K, *]] {
         override def fromMap[V]( map: Map[K, V] ): Map[K, V] = map
       }
 
-    implicit def hashMapFromMap[K]: FromMap[K, HashMap[K, ?]] =
-      new FromMap[K, HashMap[K, ?]] {
+    implicit def hashMapFromMap[K]: FromMap[K, HashMap[K, *]] =
+      new FromMap[K, HashMap[K, *]] {
         override def fromMap[V]( map: Map[K, V] ): HashMap[K, V] = HashMap( map.toSeq: _* )
       }
 
-    implicit def listMapFromMap[K]: FromMap[K, ListMap[K, ?]] =
-      new FromMap[K, ListMap[K, ?]] {
+    implicit def listMapFromMap[K]: FromMap[K, ListMap[K, *]] =
+      new FromMap[K, ListMap[K, *]] {
         override def fromMap[V]( map: Map[K, V] ): ListMap[K, V] = ListMap( map.toSeq: _* )
       }
 
-    implicit def fromMapSTreeMap[K: Ordering]: FromMap[K, TreeMap[K, ?]] =
-      new FromMap[K, TreeMap[K, ?]] {
+    implicit def fromMapSTreeMap[K: Ordering]: FromMap[K, TreeMap[K, *]] =
+      new FromMap[K, TreeMap[K, *]] {
         override def fromMap[V]( map: Map[K, V] ): TreeMap[K, V] = TreeMap( map.toSeq: _* )
       }
 
