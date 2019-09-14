@@ -38,17 +38,19 @@ object CoproductDiff {
   ): CoproductDiff[FieldType[K, V] :+: C] =
     new CoproductDiff[FieldType[K, V] :+: C] {
 
+      private val diff: Diff[V] = V.unify
+
       private def showTag( value: FieldType[K, V] :+: C ): String = s"${tag( value )}(...)"
 
       override def apply( left: FieldType[K, V] :+: C, right: FieldType[K, V] :+: C ): Option[Difference] =
         ( left, right ) match {
-          case ( Inl( l ), Inl( r ) ) => V.unify.apply( l, r )
+          case ( Inl( l ), Inl( r ) ) => diff.apply( l, r )
           case ( Inr( l ), Inr( r ) ) => T( l, r )
           case _                      => Difference.Value( showTag( left ), showTag( right ) ).some
         }
 
       override def show( value: FieldType[K, V] :+: C ): String =
-        value.eliminate( V.unify.show, T.show )
+        value.eliminate( diff.show, T.show )
 
       override def tag( value: FieldType[K, V] :+: C ): String = value match {
         case Inl( _ ) => K.value.name

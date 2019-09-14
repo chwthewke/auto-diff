@@ -105,6 +105,7 @@ val `auto-diff-generic` = project
   .settings( autodiffSettings )
   .settings( Console.coreImports.settings )
   .settings( libraryDependencies ++= Dependencies.shapeless )
+  .settings( Dependencies.addScalaReflect )
   .settings( publishSettings )
   .dependsOn( `auto-diff-core` )
 

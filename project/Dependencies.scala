@@ -40,4 +40,7 @@ object Dependencies {
 
   val settings: Seq[Def.Setting[_]] =
     Seq( libraryDependencies ++= common, overrides )
+
+  val addScalaReflect =
+    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 }
