@@ -7,6 +7,7 @@ import ReleaseTransformations._
 // format: off
 scalaOrganization in ThisBuild := "org.scala-lang"
 conflictManager   in ThisBuild := ConflictManager.strict
+conflictManager   in updateSbtClassifiers in ThisBuild := ConflictManager.default
 // format: on
 
 val sharedSettings = Seq(

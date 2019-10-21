@@ -50,9 +50,49 @@ class MutuallyRecursiveSpec extends WordSpec with Matchers with TypeCheckedTripl
     }
   }
 
+  "Using both diffs implicitly" should {
+
+    import MutuallyRecursiveSpec.implicits._
+
+    "compute an outer diff (A)" in {
+      Diff[Outer].apply( Outer( "foo", Vector.empty ), Outer( "bar", Vector.empty ) ).tree should ===(
+        F( "Outer", "tag" -> ("foo" !== "bar") )
+      )
+    }
+
+    "compute an inner diff (A-B)" in {
+      Diff[Outer]
+        .apply( Outer( "foo", Vector( Inner( "bar", None ) ) ), Outer( "foo", Vector( Inner( "baz", None ) ) ) )
+        .tree should ===(
+        F( "Outer", "inners" -> I( T.Seq, "Vector", 0 -> F( "Inner", "tag" -> ("bar" !== "baz") ) ) )
+      )
+    }
+
+  }
+
 }
 
 object MutuallyRecursiveSpec {
   case class Outer( tag: String, inners: Vector[Inner] )
   case class Inner( tag: String, outer: Option[Outer] )
+
+  object implicits extends implicitsLow {
+    implicit val innerDiff: Diff[Inner] = innerDiff0
+    implicit val outerDiff: Diff[Outer] = outerDiff0
+  }
+
+  trait implicitsLow {
+
+    val innerDiff0: Diff[Inner] = {
+      import auto._
+      semi.diff[Inner]
+    }
+
+    val outerDiff0: Diff[Outer] = {
+      import auto._
+      semi.diff[Outer]
+    }
+
+  }
+
 }

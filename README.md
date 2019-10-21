@@ -147,6 +147,48 @@ and parametric recursive types. See
 [the tests](doc/auto-diff-tests/src/test/scala/fr/thomasdufour/autodiff/derived)
 for some examples 
 
+#### An important note on mutually recursive types
+
+Deriving `Diff` instances for mutually recursive types and declaring them implicit in the same scope can go quite badly.
+And by badly I mean `NullPointerException`- or `StackOverflowError`-badly.
+
+A suggestion on how to fix this issue:
+
+```scala
+import fr.thomasdufour.autodiff.Diff
+import fr.thomasdufour.autodiff.derived.auto
+import fr.thomasdufour.autodiff.derived.semi
+
+case class Outer( inners: Vector[Inner] )
+case class Inner( outers: Vector[Outer] )
+
+// BAD!! DON'T DO THIS
+object implicits1 {
+  lazy implicit val outerDiff: Diff[Outer] = semi.diff[Outer]
+  lazy implicit val innerDiff: Diff[Inner] = semi.diff[Inner]
+}
+
+// DO THIS INSTEAD
+trait implicits2 {
+  protected def mkOuterDiff: Diff[Outer] = {
+    import auto._
+    semi.diff[Outer]
+  }
+
+  protected def mkInnerDiff: Diff[Inner] = {
+    import auto._
+    semi.diff[Inner]
+  }
+}
+
+object implicits2 extends implicits2 {
+  implicit val outerDiff: Diff[Outer] = mkOuterDiff
+  implicit val innerDiff: Diff[Inner] = mkInnerDiff
+}
+```
+
+
+
 ## Customization
 
 ### Type-driven
