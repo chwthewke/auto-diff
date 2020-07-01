@@ -27,6 +27,7 @@ import scala.collection.immutable.ListSet
 import scala.collection.immutable.LongMap
 import scala.collection.immutable.Map
 import scala.collection.immutable.Queue
+import scala.collection.immutable.SortedMap
 import scala.collection.immutable.TreeMap
 import scala.collection.immutable.TreeSet
 
@@ -130,7 +131,7 @@ object Diff extends TupleDiff with ProductDiff with DiffVersionSpecific {
       }
     }
 
-  def inAnyOrder[A, CC[_]]( implicit D: Diff[A], H: DiffMatch.Hint[A], D1: AsIterable[CC] ): Diff[CC[A]] =
+  def inAnyOrder[A, CC[_]]( implicit D: Diff[A], H: Hint[A], D1: AsIterable[CC] ): Diff[CC[A]] =
     InAnyOrder.anyOrderDiff[A].contramap( cc => InAnyOrder.diffable( cc ) )
 
   implicit def listDiff[A]( implicit D: Diff[A] ): Diff[List[A]]   = LinearSeqDiff.listDiff
@@ -146,12 +147,13 @@ object Diff extends TupleDiff with ProductDiff with DiffVersionSpecific {
 
   // TODO More collections (Ranges, BitSets)
 
-  implicit def mapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[Map[K, V]]         = MapDiff.mapDiff
-  implicit def intMapDiff[V]( implicit DV: Diff[V] ): Diff[IntMap[V]]                      = MapDiff.intMapDiff
-  implicit def longMapDiff[V]( implicit DV: Diff[V] ): Diff[LongMap[V]]                    = MapDiff.longMapDiff
-  implicit def hashMapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[HashMap[K, V]] = MapDiff.hashMapDiff
-  implicit def listMapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[ListMap[K, V]] = MapDiff.listMapDiff
-  implicit def treeMapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[TreeMap[K, V]] = MapDiff.treeMapDiff
+  implicit def mapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[Map[K, V]]             = MapDiff.mapDiff
+  implicit def sortedMapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[SortedMap[K, V]] = MapDiff.sortedMapDiff
+  implicit def intMapDiff[V]( implicit DV: Diff[V] ): Diff[IntMap[V]]                          = MapDiff.intMapDiff
+  implicit def longMapDiff[V]( implicit DV: Diff[V] ): Diff[LongMap[V]]                        = MapDiff.longMapDiff
+  implicit def hashMapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[HashMap[K, V]]     = MapDiff.hashMapDiff
+  implicit def listMapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[ListMap[K, V]]     = MapDiff.listMapDiff
+  implicit def treeMapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[TreeMap[K, V]]     = MapDiff.treeMapDiff
 
   // cats-data collections
 

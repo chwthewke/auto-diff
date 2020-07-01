@@ -78,7 +78,7 @@ For the current version, check the maven central badge at the top of this readme
 - Some collections and ADTs, including:
   - `Option`
   - `Either`
-  - `List`, `Vector`, *finite* `Stream` and `LazyList`, `Set`, `Map` and a few more specialized variants
+  - `List`, `Vector`, *finite* `Stream` and `LazyList`, `Set`, `Map`, `SortedMap` and a few more specialized variants
   - `Iterable` as a fallback
 - `cats.data` types including `Validated`, `Chain` and `NonEmpty{Chain|List|Vector}`
 - enumeratum `Enum`s when using the `autodiff-enumeratum` module.
@@ -113,7 +113,7 @@ Like in Typelevel [kittens](https://github.com/typelevel/kittens), there are thr
 of generic derivation: semi-automatic, full-automatic, and cached full-automatic.
 
 As these modes are so directly copied from kittens, the best explanation of how they work
-would be found in the kittens [README](https://github.com/typelevel/kittens#three-modes-of-derivation)
+would be found in the kittens [README](https://github.com/typelevel/kittens/tree/v2.0.0#three-modes-of-derivation)
 
 The recommended mode is semi-automatic, with auto-derivation locally in scope and assigning the
 resulting instances to (implicit) `val`s.
@@ -238,9 +238,13 @@ types to (diffable) components.
 Finally, there are `Diff.ignore` that never reports its arguments as different and `Diff.inAnyOrder`
 that compares collections as if they were unordered bags.
 
-### `DiffMatch.Hint`
+### `Hint`
 
-(TODO)
+An optional, implicit `Hint[A]` can be used for some `Diff` instances related to unordered collection diffing, such as
+`Diff.inAnyOrder` or `Diff[Set[A]]`, to indicate whether elements can be equal. This can help align mismatched elements
+and provide a better `Difference`. 
+
+(TODO: longer explanation & examples)
 
 ## Future work (in no particular order)
 

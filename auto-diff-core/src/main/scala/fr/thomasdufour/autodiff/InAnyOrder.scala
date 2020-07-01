@@ -6,7 +6,7 @@ object InAnyOrder {
   def diffable[F[_], A]( coll: F[A] )( implicit D: AsIterable[F] ): InAnyOrder[A] =
     new InAnyOrder[A]( D.asIterable( coll ) )
 
-  private[autodiff] def unorderedDiff[A: Diff: DiffMatch.Hint](
+  private[autodiff] def unorderedDiff[A: Diff: Hint](
       left: InAnyOrder[A],
       right: InAnyOrder[A]
   ): Option[Difference.Unordered] =
@@ -14,7 +14,7 @@ object InAnyOrder {
 
   def mkAnyOrderDiff[A, D <: Difference](
       cont: Difference.Unordered => D
-  )( implicit D: Diff[A], H: DiffMatch.Hint[A] ): Diff[InAnyOrder[A]] =
+  )( implicit D: Diff[A], H: Hint[A] ): Diff[InAnyOrder[A]] =
     new Diff[InAnyOrder[A]] {
       override def apply( left: InAnyOrder[A], right: InAnyOrder[A] ): Option[Difference] =
         unorderedDiff( left, right ).map( cont )
@@ -22,7 +22,7 @@ object InAnyOrder {
       override def show( value: InAnyOrder[A] ): String = "{ " + DiffMatch.showUnordered( D, value.coll ) + " }"
     }
 
-  implicit def anyOrderDiff[A]( implicit D: Diff[A], H: DiffMatch.Hint[A] ): Diff[InAnyOrder[A]] =
+  implicit def anyOrderDiff[A]( implicit D: Diff[A], H: Hint[A] ): Diff[InAnyOrder[A]] =
     mkAnyOrderDiff( identity )
 
 }

@@ -1,7 +1,7 @@
 import sbt._
 import sbt.Keys._
 
-object Console {
+object SbtConsole {
 
   case class Imports( compileList: List[String], testList: List[String] ) {
     def depends( others: Imports* ): Imports =

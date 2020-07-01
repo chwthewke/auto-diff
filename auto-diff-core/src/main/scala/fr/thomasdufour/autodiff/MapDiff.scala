@@ -7,6 +7,7 @@ import scala.collection.immutable.IntMap
 import scala.collection.immutable.ListMap
 import scala.collection.immutable.LongMap
 import scala.collection.immutable.Map
+import scala.collection.immutable.SortedMap
 import scala.collection.immutable.TreeMap
 
 private[autodiff] object MapDiff {
@@ -21,7 +22,7 @@ private[autodiff] object MapDiff {
         val DiffMatch( keyDiff, keyMatch ) = DiffMatch.of( left.keys, right.keys )
 
         val valueDiffs =
-          keyMatch.toList.flatMap {
+          keyMatch.flatMap {
             case ( leftKey, rightKey ) =>
               for {
                 leftValue  <- left.get( leftKey )
@@ -44,6 +45,8 @@ private[autodiff] object MapDiff {
   }
 
   def mapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[Map[K, V]] = mapLikeDiff[K, V, Map[K, V]]( "Map" )
+  def sortedMapDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[SortedMap[K, V]] =
+    mapLikeDiff[K, V, SortedMap[K, V]]( "SortedMap" )
   def intMapDiff[V]( implicit DK: Diff[Int], DV: Diff[V] ): Diff[IntMap[V]] =
     mapLikeDiff[Int, V, IntMap[V]]( "IntMap" )
   def longMapDiff[V]( implicit DK: Diff[Long], DV: Diff[V] ): Diff[LongMap[V]] =

@@ -8,4 +8,4 @@ target/
 .classpath
 .settings
 .scalafmt.conf
-
+gpg.sbt

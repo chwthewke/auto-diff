@@ -6,10 +6,20 @@ object Dependencies {
   type D = Seq[ModuleID]
 
   val kindProjector: D = Seq(
-    compilerPlugin( "org.typelevel" %% "kind-projector" % "0.10.3" cross CrossVersion.binary )
+    compilerPlugin( "org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full )
   )
 
-  val splain: D = Seq( compilerPlugin( "io.tryp" % "splain" % "0.4.1" cross CrossVersion.patch ) )
+  val splain: D = Seq( compilerPlugin( "io.tryp" % "splain" % "0.5.7" cross CrossVersion.patch ) )
+
+  val silencerVersion = "1.7.0"
+
+  val silencerSettings = Seq(
+    libraryDependencies ++= Seq(
+      compilerPlugin( "com.github.ghik" %% "silencer-plugin" % silencerVersion cross CrossVersion.full ),
+      "com.github.ghik" %% "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
+    )
+  )
+
 
   val catsVersion = "2.0.0"
 

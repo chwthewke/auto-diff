@@ -32,14 +32,6 @@ val autodiffSettings: Seq[Def.Setting[_]] =
       testOptions in Test += Tests.Argument( TestFrameworks.ScalaTest, "-oDF" )
     )
 
-val silencerVersion = "1.4.1"
-
-val silencerSettings = Seq(
-  libraryDependencies ++= Seq(
-    compilerPlugin( "com.github.ghik" %% "silencer-plugin" % silencerVersion ),
-    "com.github.ghik" %% "silencer-lib" % silencerVersion % Provided
-  )
-)
 
 def withOverwrite( enable: Boolean )( config: PublishConfiguration ): PublishConfiguration =
   config.withOverwrite( enable )
@@ -96,44 +88,44 @@ val noPublishSettings = Seq(
 
 val `auto-diff-core` = project
   .settings( autodiffSettings )
-  .settings( silencerSettings )
+  .settings( Dependencies.silencerSettings )
   .settings( SbtBuildInfo.buildSettings( "AutodiffBuildInfo" ) )
-  .settings( Console.coreImports.settings )
+  .settings( SbtConsole.coreImports.settings )
   .settings( sourceGenerators in Compile += (sourceManaged in Compile).map( Boilerplate.gen ).taskValue )
   .settings( publishSettings )
 
 val `auto-diff-generic` = project
   .settings( autodiffSettings )
-  .settings( Console.coreImports.settings )
+  .settings( SbtConsole.coreImports.settings )
   .settings( libraryDependencies ++= Dependencies.shapeless )
   .settings( publishSettings )
   .dependsOn( `auto-diff-core` )
 
 val `auto-diff-enumeratum` = project
   .settings( autodiffSettings )
-  .settings( Console.coreImports.settings )
+  .settings( SbtConsole.coreImports.settings )
   .settings( libraryDependencies ++= Dependencies.enumeratum )
   .settings( publishSettings )
   .dependsOn( `auto-diff-core` )
 
 val `auto-diff-scalatest` = project
   .settings( autodiffSettings )
-  .settings( Console.coreImports.settings )
+  .settings( SbtConsole.coreImports.settings )
   .settings( libraryDependencies ++= Dependencies.scalatest )
   .settings( publishSettings )
   .dependsOn( `auto-diff-core` )
 
 val `auto-diff-tests` = project
   .settings( autodiffSettings )
-  .settings( silencerSettings )
-  .settings( Console.coreImports.settings )
+  .settings( Dependencies.silencerSettings )
+  .settings( SbtConsole.coreImports.settings )
   .settings( libraryDependencies ++= Dependencies.scalatestForTests ++ Dependencies.scalacheck ++ Dependencies.splain )
   .settings( noPublishSettings )
   .dependsOn( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-generic`, `auto-diff-scalatest` )
 
 val `auto-diff-examples` = project
   .settings( autodiffSettings )
-  .settings( Console.coreImports.settings )
+  .settings( SbtConsole.coreImports.settings )
   .settings( noPublishSettings )
   .dependsOn( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-generic`, `auto-diff-scalatest` )
 
@@ -155,6 +147,7 @@ val `auto-diff` = project
 val `auto-diff-coverage` = project
   .in( file( "target/auto-diff-coverage" ) )
   .settings( sharedSettings )
+  .settings( Dependencies.overrides )
   .settings( noPublishSettings )
   .settings( crossScalaVersions := Nil )
   .aggregate( `auto-diff-core`, `auto-diff-enumeratum`, `auto-diff-generic`, `auto-diff-scalatest`, `auto-diff-tests` )

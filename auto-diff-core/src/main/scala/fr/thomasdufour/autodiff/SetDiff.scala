@@ -8,7 +8,7 @@ private[autodiff] object SetDiff {
 
   def setLikeDiff[A, CC <: Set[A]](
       name: String
-  )( implicit D: Diff[A], H: DiffMatch.Hint[A] ): Diff[CC] =
+  )( implicit D: Diff[A], H: Hint[A] ): Diff[CC] =
     InAnyOrder
       .mkAnyOrderDiff( d => Difference.Set( name, d ) )
       .contramap[CC]( set => new InAnyOrder[A]( set ) )

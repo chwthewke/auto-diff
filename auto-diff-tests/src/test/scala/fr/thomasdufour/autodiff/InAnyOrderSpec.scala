@@ -64,7 +64,7 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
     "with a match hint" when {
 
       import cats.instances.int._
-      implicit val hint: DiffMatch.Hint[( Int, String )] = DiffMatch.Hint.byEqShow[Int].contramap( _._1 )
+      implicit val hint: Hint[( Int, String )] = Hint.byEqShow[Int].contramap( _._1 )
 
       val diff = Diff.inAnyOrder[( Int, String ), Vector]
 
