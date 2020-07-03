@@ -29,6 +29,24 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
         }
       }
 
+      "the collections are equivalent, with repeated elements" should {
+        "report no difference" in {
+          diff.apply( Vector( 1, 2, 2, 3 ), Vector( 3, 2, 1, 2 ) ).tree should ===( Z )
+        }
+      }
+
+      "the collections are not equivalent, with extra repetitions on the left" should {
+        "report the extra elements as removed" in {
+          diff.apply( Vector( 1, 2, 2 ), Vector( 1, 2 ) ).tree should ===( U( Some( V( "2", "" ) ), Nil ) )
+        }
+      }
+
+      "the collections are not equivalent, with extra repetitions on the right" should {
+        "report the extra elements as removed" in {
+          diff.apply( Vector( 1, 2 ), Vector( 1, 2, 2 ) ).tree should ===( U( Some( V( "", "2" ) ), Nil ) )
+        }
+      }
+
       "the collections have mismatched elements" should {
         "report the removed and added elements in order" in {
 
