@@ -2,6 +2,7 @@ package fr.thomasdufour.autodiff
 
 import scala.collection.immutable.HashSet
 import scala.collection.immutable.ListSet
+import scala.collection.immutable.SortedSet
 import scala.collection.immutable.TreeSet
 
 private[autodiff] object SetDiff {
@@ -13,8 +14,9 @@ private[autodiff] object SetDiff {
       .mkAnyOrderDiff( d => Difference.Set( name, d ) )
       .contramap[CC]( set => new InAnyOrder[A]( set ) )
 
-  def setDiff[A]( implicit D: Diff[A] ): Diff[Set[A]]         = setLikeDiff[A, Set[A]]( "Set" )
-  def listSetDiff[A]( implicit D: Diff[A] ): Diff[ListSet[A]] = setLikeDiff[A, ListSet[A]]( "ListSet" )
-  def hashSetDiff[A]( implicit D: Diff[A] ): Diff[HashSet[A]] = setLikeDiff[A, HashSet[A]]( "HashSet" )
-  def treeSetDiff[A]( implicit D: Diff[A] ): Diff[TreeSet[A]] = setLikeDiff[A, TreeSet[A]]( "TreeSet" )
+  def setDiff[A]( implicit D: Diff[A] ): Diff[Set[A]]             = setLikeDiff[A, Set[A]]( "Set" )
+  def sortedSetDiff[A]( implicit D: Diff[A] ): Diff[SortedSet[A]] = setLikeDiff[A, SortedSet[A]]( "SortedSet" )
+  def listSetDiff[A]( implicit D: Diff[A] ): Diff[ListSet[A]]     = setLikeDiff[A, ListSet[A]]( "ListSet" )
+  def hashSetDiff[A]( implicit D: Diff[A] ): Diff[HashSet[A]]     = setLikeDiff[A, HashSet[A]]( "HashSet" )
+  def treeSetDiff[A]( implicit D: Diff[A] ): Diff[TreeSet[A]]     = setLikeDiff[A, TreeSet[A]]( "TreeSet" )
 }

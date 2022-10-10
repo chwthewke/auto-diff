@@ -5,7 +5,7 @@ import BuildInfoKeys._
 import sbtrelease.Version
 
 object SbtBuildInfo {
-  val shortVersion = SettingKey[String]( "short-version" )
+  val shortVersion = SettingKey[String]( "short-version" ).withRank( KeyRanks.Invisible )
 
   def buildSettings( objectName: String, targetPackage: String = "fr.thomasdufour.autodiff" ) =
     BuildInfoPlugin.projectSettings ++ Seq(

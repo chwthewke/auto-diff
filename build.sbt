@@ -10,6 +10,12 @@ conflictManager   in ThisBuild := ConflictManager.strict
 conflictManager   in updateSbtClassifiers in ThisBuild := ConflictManager.default
 // format: on
 
+// Default crossVersions from sbt
+// should be updated when changing sbt version (inspect auto-diff-core/crossScalaVersions)
+
+// ThisBuild / scalaVersion := "2.12.11"
+ThisBuild / scalaVersion := "2.13.3"
+
 val sharedSettings = Seq(
   organization := "fr.thomasdufour",
   publishTo := Some(
@@ -29,9 +35,9 @@ val autodiffSettings: Seq[Def.Setting[_]] =
     Scalac.settings ++
     Dependencies.settings ++
     Seq(
+      crossScalaVersions := Seq( "2.12.11", "2.13.3" ),
       testOptions in Test += Tests.Argument( TestFrameworks.ScalaTest, "-oDF" )
     )
-
 
 def withOverwrite( enable: Boolean )( config: PublishConfiguration ): PublishConfiguration =
   config.withOverwrite( enable )

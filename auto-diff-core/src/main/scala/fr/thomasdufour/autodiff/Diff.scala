@@ -6,6 +6,8 @@ import cats.Show
 import cats.data.Chain
 import cats.data.NonEmptyChain
 import cats.data.NonEmptyList
+import cats.data.NonEmptyMap
+import cats.data.NonEmptySet
 import cats.data.NonEmptyVector
 import cats.data.Validated
 import cats.kernel.Eq
@@ -25,9 +27,9 @@ import scala.collection.immutable.IntMap
 import scala.collection.immutable.ListMap
 import scala.collection.immutable.ListSet
 import scala.collection.immutable.LongMap
-import scala.collection.immutable.Map
 import scala.collection.immutable.Queue
 import scala.collection.immutable.SortedMap
+import scala.collection.immutable.SortedSet
 import scala.collection.immutable.TreeMap
 import scala.collection.immutable.TreeSet
 
@@ -140,10 +142,11 @@ object Diff extends TupleDiff with ProductDiff with DiffVersionSpecific {
   implicit def streamDiff[A]( implicit D: Diff[A] ): Diff[Stream[A]] = LinearSeqDiff.streamDiff
   implicit def vectorDiff[A]( implicit D: Diff[A] ): Diff[Vector[A]] = IndexedSeqDiff.vectorDiff
 
-  implicit def setDiff[A]( implicit D: Diff[A] ): Diff[Set[A]]         = SetDiff.setDiff
-  implicit def listSetDiff[A]( implicit D: Diff[A] ): Diff[ListSet[A]] = SetDiff.listSetDiff
-  implicit def hashSetDiff[A]( implicit D: Diff[A] ): Diff[HashSet[A]] = SetDiff.hashSetDiff
-  implicit def treeSetDiff[A]( implicit D: Diff[A] ): Diff[TreeSet[A]] = SetDiff.treeSetDiff
+  implicit def setDiff[A]( implicit D: Diff[A] ): Diff[Set[A]]             = SetDiff.setDiff
+  implicit def sortedSetDiff[A]( implicit D: Diff[A] ): Diff[SortedSet[A]] = SetDiff.sortedSetDiff
+  implicit def listSetDiff[A]( implicit D: Diff[A] ): Diff[ListSet[A]]     = SetDiff.listSetDiff
+  implicit def hashSetDiff[A]( implicit D: Diff[A] ): Diff[HashSet[A]]     = SetDiff.hashSetDiff
+  implicit def treeSetDiff[A]( implicit D: Diff[A] ): Diff[TreeSet[A]]     = SetDiff.treeSetDiff
 
   // TODO More collections (Ranges, BitSets)
 
@@ -161,6 +164,10 @@ object Diff extends TupleDiff with ProductDiff with DiffVersionSpecific {
   implicit def necDiff[A]( implicit D: Diff[A] ): Diff[NonEmptyChain[A]]  = CatsDataDiff.nonEmptyChainDiff
   implicit def nelDiff[A]( implicit D: Diff[A] ): Diff[NonEmptyList[A]]   = CatsDataDiff.nonEmptyListDiff
   implicit def nevDiff[A]( implicit D: Diff[A] ): Diff[NonEmptyVector[A]] = CatsDataDiff.nonEmptyVectorDiff
+  implicit def nesDiff[A]( implicit D: Diff[A] ): Diff[NonEmptySet[A]]    = CatsDataDiff.nonEmptySetDiff
+
+  implicit def nemDiff[K, V]( implicit DK: Diff[K], DV: Diff[V] ): Diff[NonEmptyMap[K, V]] =
+    CatsDataDiff.nonEmptyMapDiff
 
   implicit def iterableDiff[A]( implicit D: Diff[A] ): Diff[Iterable[A]] =
     LinearSeqDiff.diffAsList[A]( "an iterable" ).contramap[Iterable[A]]( _.toList )

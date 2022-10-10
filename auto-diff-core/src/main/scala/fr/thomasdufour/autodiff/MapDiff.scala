@@ -6,7 +6,6 @@ import scala.collection.immutable.HashMap
 import scala.collection.immutable.IntMap
 import scala.collection.immutable.ListMap
 import scala.collection.immutable.LongMap
-import scala.collection.immutable.Map
 import scala.collection.immutable.SortedMap
 import scala.collection.immutable.TreeMap
 

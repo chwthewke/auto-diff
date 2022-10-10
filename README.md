@@ -78,9 +78,9 @@ For the current version, check the maven central badge at the top of this readme
 - Some collections and ADTs, including:
   - `Option`
   - `Either`
-  - `List`, `Vector`, *finite* `Stream` and `LazyList`, `Set`, `Map`, `SortedMap` and a few more specialized variants
+  - `List`, `Vector`, *finite* `Stream` and `LazyList`, `[Sorted]Set`, `[Sorted]Map` and a few more specialized variants
   - `Iterable` as a fallback
-- `cats.data` types including `Validated`, `Chain` and `NonEmpty{Chain|List|Vector}`
+- `cats.data` types including `Validated`, `Chain` and `NonEmpty{Chain|List|Vector|Set}`
 - enumeratum `Enum`s when using the `autodiff-enumeratum` module.
 
 ```scala

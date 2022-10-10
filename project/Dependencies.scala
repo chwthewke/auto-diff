@@ -20,8 +20,7 @@ object Dependencies {
     )
   )
 
-
-  val catsVersion = "2.0.0"
+  val catsVersion = "2.8.0"
 
   val cats: D = Seq( "org.typelevel" %% "cats-core" % catsVersion )
 
