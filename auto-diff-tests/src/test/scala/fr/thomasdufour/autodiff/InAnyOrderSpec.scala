@@ -37,20 +37,22 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
 
       "the collections are not equivalent, with extra repetitions on the left" should {
         "report the extra elements as removed" in {
-          diff.apply( Vector( 1, 2, 2 ), Vector( 1, 2 ) ).tree should ===( U( Some( V( "2", "" ) ), Nil ) )
+          diff.apply( Vector( 1, 2, 2 ), Vector( 1, 2 ) ).tree should ===( U( Some( U.V( "2" )() ), Nil ) )
         }
       }
 
       "the collections are not equivalent, with extra repetitions on the right" should {
         "report the extra elements as removed" in {
-          diff.apply( Vector( 1, 2 ), Vector( 1, 2, 2 ) ).tree should ===( U( Some( V( "", "2" ) ), Nil ) )
+          diff.apply( Vector( 1, 2 ), Vector( 1, 2, 2 ) ).tree should ===( U( Some( U.V()( "2" ) ), Nil ) )
         }
       }
 
       "the collections have mismatched elements" should {
         "report the removed and added elements in order" in {
 
-          diff.apply( Vector( 1, 3, 7 ), Vector( 0, 3, 5 ) ).tree should ===( U( Some( V( "1, 7", "0, 5" ) ), Nil ) )
+          diff.apply( Vector( 1, 3, 7 ), Vector( 0, 3, 5 ) ).tree should ===(
+            U( Some( U.V( "1", "7" )( "0", "5" ) ), Nil )
+          )
 
         }
       }
@@ -58,7 +60,7 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
       "the collections a single mismatched element last of several" should {
         "report the removed and added elements in order" in {
 
-          diff.apply( Vector( 1, 3, 7 ), Vector( 1, 3, 5 ) ).tree should ===( U( Some( V( "7", "5" ) ), Nil ) )
+          diff.apply( Vector( 1, 3, 7 ), Vector( 1, 3, 5 ) ).tree should ===( U( Some( U.V( "7" )( "5" ) ), Nil ) )
 
         }
       }
@@ -66,14 +68,14 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
       "the collections a single mismatched element first of several" should {
         "report the removed and added elements in order" in {
 
-          diff.apply( Vector( 0, 3, 5 ), Vector( 1, 3, 5 ) ).tree should ===( U( Some( V( "0", "1" ) ), Nil ) )
+          diff.apply( Vector( 0, 3, 5 ), Vector( 1, 3, 5 ) ).tree should ===( U( Some( U.V( "0" )( "1" ) ), Nil ) )
 
         }
       }
 
       "one collection has an extra element" should {
         "report the extra element" in {
-          diff.apply( Vector( 3, 2, 1 ), Vector( 1, 3 ) ).tree should ===( U( Some( V( "2", "" ) ), Nil ) )
+          diff.apply( Vector( 3, 2, 1 ), Vector( 1, 3 ) ).tree should ===( U( Some( U.V( "2" )() ), Nil ) )
         }
       }
 
@@ -122,7 +124,7 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
         "report those as added and removed" in {
 
           diff.apply( Vector( 5 -> "c", 1 -> "a", 2 -> "b" ), Vector( 1 -> "a", 4 -> "z" ) ).tree should ===(
-            U( Some( V( "(5, c), (2, b)", "(4, z)" ) ), Nil )
+            U( Some( U.V( "(5, c)", "(2, b)" )( "(4, z)" ) ), Nil )
           )
 
         }
@@ -161,7 +163,7 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
           F(
             "Things",
             "vec" ->
-              U( Some( V( "Thing(value: 1), Thing(value: 7)", "Thing(value: 0), Thing(value: 5)" ) ), Nil )
+              U( Some( U.V( "Thing(value: 1)", "Thing(value: 7)" )( "Thing(value: 0)", "Thing(value: 5)" ) ), Nil )
           )
         )
 
@@ -175,7 +177,7 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
           F(
             "Things",
             "vec" ->
-              U( Some( V( "Thing(value: 7)", "Thing(value: 5)" ) ), Nil )
+              U( Some( U.V( "Thing(value: 7)" )( "Thing(value: 5)" ) ), Nil )
           )
         )
 
@@ -189,7 +191,7 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
           F(
             "Things",
             "vec" ->
-              U( Some( V( "Thing(value: 0)", "Thing(value: 1)" ) ), Nil )
+              U( Some( U.V( "Thing(value: 0)" )( "Thing(value: 1)" ) ), Nil )
           )
         )
 
@@ -202,7 +204,7 @@ class InAnyOrderSpec extends WordSpec with Matchers with TypeCheckedTripleEquals
           F(
             "Things",
             "vec" ->
-              U( Some( V( "Thing(value: 2)", "" ) ), Nil )
+              U( Some( U.V( "Thing(value: 2)" )() ), Nil )
           )
         )
 

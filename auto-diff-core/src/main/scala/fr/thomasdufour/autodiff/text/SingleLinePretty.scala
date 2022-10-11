@@ -13,10 +13,13 @@ case class SingleLinePretty( color: Colorize ) extends Pretty {
   private def showValue( v: Value ): String =
     color.left( v.left ) + " -> " + color.right( v.right )
 
-  private def showUnordered( diff: Ior[Value, NonEmptyList[Difference]] ): String =
+  private def showValues( v: Values ): String =
+    color.left( v.left.mkString( ", " ) ) + " -> " + color.right( v.right.mkString( ", " ) )
+
+  private def showUnordered( diff: Ior[Values, NonEmptyList[Difference]] ): String =
     "{ " +
       diff
-        .bimap( showValue, _.map( loop ) )
+        .bimap( showValues, _.map( loop ) )
         .fold[NonEmptyList[String]]( NonEmptyList.of( _ ), identity, _ :: _ )
         .reduceLeft( _ + ", " + _ ) + " }"
 

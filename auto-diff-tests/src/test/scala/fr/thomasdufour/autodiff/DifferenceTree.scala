@@ -8,13 +8,21 @@ import cats.data.NonEmptyList
 // TODO It made sense once, but now, it might be better/simpler to replace with extractors, wouldn't it?
 sealed trait DifferenceTree
 
-case object Z                                                             extends DifferenceTree
-final case class V( left: String, right: String )                         extends DifferenceTree
-final case class U( d: Option[DifferenceTree], ms: List[DifferenceTree] ) extends DifferenceTree
-final case class T( kind: T.K, name: String, d: DifferenceTree )          extends DifferenceTree
-final case class I( kind: T.I, name: String, ds: NonEmptyList[T.Index] )  extends DifferenceTree
-final case class F( name: String, ds: NonEmptyList[T.Field] )             extends DifferenceTree
-final case class M( name: String, keys: Option[T], ds: List[T.Keyed] )    extends DifferenceTree
+case object Z                                                            extends DifferenceTree
+final case class V( left: String, right: String )                        extends DifferenceTree
+final case class U( d: Option[U.V], ms: List[DifferenceTree] )           extends DifferenceTree
+final case class T( kind: T.K, name: String, d: DifferenceTree )         extends DifferenceTree
+final case class I( kind: T.I, name: String, ds: NonEmptyList[T.Index] ) extends DifferenceTree
+final case class F( name: String, ds: NonEmptyList[T.Field] )            extends DifferenceTree
+final case class M( name: String, keys: Option[T], ds: List[T.Keyed] )   extends DifferenceTree
+
+object U {
+  case class V( left: Set[String], right: Set[String] )
+  object V {
+    def apply( lefts: String* )( rights: String* ): V = V( lefts.toSet, rights.toSet )
+    val empty: V                                      = V( Set.empty, Set.empty )
+  }
+}
 
 object I {
   def apply( kind: T.I, name: String, index0: ( Int, DifferenceTree ), indexes: ( Int, DifferenceTree )* ): I = {
@@ -67,7 +75,10 @@ object DifferenceTree {
     case Seq( n, ds )      => I( T.Seq, n, ds.map( d => T.Index( d.index, fromDifference( d.difference ) ) ) )
     case Set( n, d )       => T( T.Set, n, fromDifference( d ) )
     case Unordered( d ) =>
-      U( d.left.map( fromDifference ), d.right.fold( List.empty[DifferenceTree] )( _.toList.map( fromDifference ) ) )
+      U(
+        d.left.map( v => U.V( v.left.toSet, v.right.toSet ) ),
+        d.right.fold( List.empty[DifferenceTree] )( _.toList.map( fromDifference ) )
+      )
     case Map( n, ds ) =>
       M(
         n,

@@ -8,9 +8,6 @@ import Difference._
 
 case class DetailedPretty( indentWidth: Int, color: Colorize ) extends Pretty {
 
-  private def indent( line: ( String, Int ) ): ( String, Int ) =
-    line match { case ( str, ind ) => ( str, ind + 1 ) }
-
   private def prettyValues( left: String, right: String ): String =
     color.left( left ) + " -> " + color.right( right )
 
@@ -29,7 +26,7 @@ case class DetailedPretty( indentWidth: Int, color: Colorize ) extends Pretty {
     case Unordered( d ) =>
       val contents =
         d.bimap(
-            prettyValueDiff( ind + 1, _ ),
+            v => ( prettyValues( v.left.mkString( ", " ), v.right.mkString( ", " ) ), ind + 1 ),
             ms => ms.flatMap( prettyIndented( ind + 1, _ ) )
           )
           .fold( NonEmptyList.of( _ ), identity, _ :: _ )

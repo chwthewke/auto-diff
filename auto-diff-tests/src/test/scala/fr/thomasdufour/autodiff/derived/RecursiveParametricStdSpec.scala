@@ -277,7 +277,7 @@ class RecursiveParametricStdSpec extends WordSpec with Matchers with TypeChecked
         ).tree should ===(
           F(
             "SetRec",
-            "rec" -> T( T.Set, "Set", U( Some( "SetRec(rec: { SetRec(rec: {  }) })" !== "" ), Nil ) )
+            "rec" -> T( T.Set, "Set", U( Some( U.V( "SetRec(rec: { SetRec(rec: {  }) })" )() ), Nil ) )
           )
         )
 
@@ -301,7 +301,7 @@ class RecursiveParametricStdSpec extends WordSpec with Matchers with TypeChecked
         ).tree should ===(
           F(
             "ListSetRec",
-            "rec" -> T( T.Set, "ListSet", U( Some( "ListSetRec(rec: { ListSetRec(rec: {  }) })" !== "" ), Nil ) )
+            "rec" -> T( T.Set, "ListSet", U( Some( U.V( "ListSetRec(rec: { ListSetRec(rec: {  }) })" )() ), Nil ) )
           )
         )
 
@@ -325,7 +325,7 @@ class RecursiveParametricStdSpec extends WordSpec with Matchers with TypeChecked
         ).tree should ===(
           F(
             "HashSetRec",
-            "rec" -> T( T.Set, "HashSet", U( Some( "HashSetRec(rec: { HashSetRec(rec: {  }) })" !== "" ), Nil ) )
+            "rec" -> T( T.Set, "HashSet", U( Some( U.V( "HashSetRec(rec: { HashSetRec(rec: {  }) })" )() ), Nil ) )
           )
         )
 
@@ -349,7 +349,7 @@ class RecursiveParametricStdSpec extends WordSpec with Matchers with TypeChecked
         ).tree should ===(
           F(
             "TreeSetRec",
-            "rec" -> T( T.Set, "TreeSet", U( Some( "TreeSetRec(rec: { TreeSetRec(rec: {  }) })" !== "" ), Nil ) )
+            "rec" -> T( T.Set, "TreeSet", U( Some( U.V( "TreeSetRec(rec: { TreeSetRec(rec: {  }) })" )() ), Nil ) )
           )
         )
 
