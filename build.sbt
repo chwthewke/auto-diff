@@ -16,6 +16,8 @@ conflictManager   in updateSbtClassifiers in ThisBuild := ConflictManager.defaul
 // ThisBuild / scalaVersion := "2.12.11"
 ThisBuild / scalaVersion := "2.13.3"
 
+ThisBuild / versionScheme := Some( "early-semver" )
+
 val sharedSettings = Seq(
   organization := "fr.thomasdufour",
   publishTo := Some(
